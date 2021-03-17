@@ -53,6 +53,8 @@ id userNameHashed userPasswordEncrypted group
 Покрыть юнит и е2е тестами
 
 
+//encrypt code
+https://gist.github.com/siwalikm/8311cf0a287b98ef67c73c1b03b47154
 
 {
   "userId": 10,
