@@ -25,6 +25,8 @@
     "@nestjs/core": "^7.6.13",
     "@nestjs/platform-express": "^7.6.13",
     "@nestjs/typeorm": "^7.1.5",
+    "dotenv": "^8.2.0",
+    "md5": "^2.3.0",
     "mysql2": "^2.2.5",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",

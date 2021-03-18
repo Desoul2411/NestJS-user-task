@@ -3,17 +3,14 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  userId: number;
+  id: number;
 
   @Column()
-  userName: string;
+  userNameHashed: string;
 
   @Column()
-  userOldPassword: string;
+  userPasswordEncrypted: string;
 
   @Column()
-  userNewPassword: string;
-
-  @Column()
-  signature: string;
+  group: number;
 }
