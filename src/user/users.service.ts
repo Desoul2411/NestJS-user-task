@@ -1,9 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { CreateUserDataDto } from './dto/create-user-data.dto';
-import { Request } from 'express';
 
 require('dotenv').config();
 const crypto = require('crypto');
@@ -12,21 +11,26 @@ const crypto = require('crypto');
 //const ENC_KEY = "bf3c199c2470cb477d907b1e0917c17b"; // set encryption key key
 //const IV = "5183666c72eec9e4"; 
 const ENC_KEY = process.env.ENC_KEY;
+const HASH_SECRET = process.env.HASH_SECRET;
 
-
-const IV = crypto.randomBytes(16); 
 const encrypt = ((password: string) : string => {
-    
+    const IV = crypto.randomBytes(16).toString(); 
+    //console.log('IV',IV);
     const cipher = crypto.createCipheriv('aes-256-cbc', ENC_KEY, IV);
     let encrypted = cipher.update(password, 'utf8', 'base64');
     encrypted += cipher.final('base64');
+    
     return encrypted;
+    //return Buffer.from(`${encrypted}--${IV}`, 'base64').toString();
 })
 
-const decrypt = ((encryptedPassword: string) : string => {
-    const decipher = crypto.createDecipheriv('aes-256-cbc', ENC_KEY, IV);
+const decrypt = ((encryptedPassword: string) : any => {
+    const utf8Pass = Buffer.from(encryptedPassword, 'base64').toString('utf-8');
+    console.log('utf8Pass' , utf8Pass);
+     //password--iv
+   /*  const decipher = crypto.createDecipheriv('aes-256-cbc', ENC_KEY, IV);
     const decrypted = decipher.update(encryptedPassword, 'base64', 'utf8');
-    return (decrypted + decipher.final('utf8'));
+    return (decrypted + decipher.final('utf8')); */
 })
 
 
@@ -41,13 +45,35 @@ export class UsersDataService {
     async findAll(): Promise<User[]>{
         return this.usersRepository.find();
     }
+    
+    async create(createUserDataDto: CreateUserDataDto): Promise<User>  /* Promise<User> */ {
+        const { userId, userName, userOldPassword, userNewPassword } = createUserDataDto;
 
-    async create(createUserDataDto: CreateUserDataDto, request: Request): Promise<User> {
-        const {userId, userName, userOldPassword, userNewPassword} = createUserDataDto;
+        //check user old password
+            /* const oldPassword = userOldPassword;
+
+            const currentUser = await this.usersRepository.findOne(userId);
+            if(!currentUser) {
+                throw new HttpException('No such user', HttpStatus.NOT_FOUND);
+            }
+            console.log('currentUser', currentUser);
+            console.log('currentUser.userPasswordEncrypted', currentUser.userPasswordEncrypted); */
+
+
+
+           /*  const decryptedPasword = decrypt(currentUser.userPasswordEncrypted);
+            console.log('decryptedPasword',decryptedPasword);
+            if (oldPassword !== decryptedPasword) {
+                console.log("222");
+                throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+            }
+      */
+        
+        //console.log(response);
 
         //hash username
         let userNameHashed = crypto
-        .createHmac('sha256', 'sbf3c19Tc2470cbyy71d907b1e0511c08o')
+        .createHmac('sha256', HASH_SECRET)
         .update(userName)
         .digest('hex');
 
@@ -55,8 +81,9 @@ export class UsersDataService {
 
         // cifer password
         const userPasswordEncrypted = encrypt(userNewPassword /* ENC_KEY, IV */);
-        const decrypted_password= decrypt(userPasswordEncrypted /* ENC_KEY, IV */);
-        console.log(decrypted_password);
+         //const decrypted_password= decrypt(userPasswordEncrypted /* ENC_KEY, IV */);
+         decrypt(userPasswordEncrypted /* ENC_KEY, IV */);
+        console.log(userPasswordEncrypted);
 
 
         function factorial(n : number) : number {
@@ -77,7 +104,6 @@ export class UsersDataService {
         }
 
         let checkNumber = Math.abs(factorial(10) - fib(10));
-        console.log(checkNumber)
 
         // select user group
         let group;
@@ -94,13 +120,22 @@ export class UsersDataService {
             }
         }
 
-        const user = new User();
-        user.id = userId;
-        user.userNameHashed = userNameHashed;
-        user.userPasswordEncrypted = userPasswordEncrypted;
-        user.group = group;
-    
-        return this.usersRepository.save(user);
+        //save to db
+        try {
+            console.log('save user');
+            const user = new User();
+            user.id = userId;
+            user.userNameHashed = userNameHashed;
+            user.userPasswordEncrypted = userPasswordEncrypted;
+            user.group = group;
+            console.log('user saved');
+            console.log('user', user);
+            return this.usersRepository.save(user);
+             
+        } catch (error) {   
+            console.log(error);
+        }
+        
     }
 }
 

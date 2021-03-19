@@ -1,27 +1,58 @@
 
-import { Controller, Body, Get, Post, HttpCode, HttpStatus, Header,Req, UseGuards} from '@nestjs/common';
+import { Controller, Body, Get, Post, HttpCode, HttpStatus, Header,Req, Res, UseGuards} from '@nestjs/common';
 import { CreateUserDataDto } from './dto/create-user-data.dto';
 import { User } from './user.entity';
 import { UsersDataService } from './users.service';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { SignatureGuard } from './guards/signature.guard';
+import  { ValidationPipe } from './validation.pipe';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ErrorResponse } from './error.type';
 
 
-@Controller('api/v1/user')
+@ApiTags('user')
+@Controller('user')
 export class UsersController {
     constructor(private readonly userDataService:  UsersDataService) { }
 
     @Get() 
-    findAll() {
+    @ApiResponse({
+        status:200,
+        description: 'get all users', 
+        type: [User] // User - array []
+    })
+    @ApiResponse({
+        status:404,
+        description: 'Not found', 
+        type: ErrorResponse
+    })
+    findAll() : Promise<User[]>  {
         return this.userDataService.findAll();
     }
-
-    @Post()// to delete elment - POST method
     //@HttpCode(HttpStatus.CREATED) // res with status 201
    // @Header('Cache-Control', 'none') // set header
-    @UseGuards(SignatureGuard)
-    create(@Body() createProductDto: CreateUserDataDto, @Req() request: Request): Promise<User> {
-        return this.userDataService.create(createProductDto,request)
+   
+   
+    @Post()
+    @ApiResponse({
+        status:201,
+        description: 'user created', 
+        type: User // User - array []
+    })
+    @ApiResponse({
+        status:403,
+        description: 'Access forbidden', 
+        type: ErrorResponse
+    })
+    @ApiResponse({
+        status:400,
+        description: 'Validation failed', 
+        type: ErrorResponse
+    })
+    @ApiBody({ type: CreateUserDataDto })  // for Swagger
+    //@UseGuards(SignatureGuard)
+    create(@Body(new ValidationPipe()) createProductDto: CreateUserDataDto): Promise<User> /* Promise<User>  */{
+        return this.userDataService.create(createProductDto)
     }
 }
 

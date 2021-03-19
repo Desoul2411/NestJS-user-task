@@ -22,36 +22,53 @@ export class SignatureGuard implements CanActivate {
 
     //let formattedBodyParams = (...args: string[]): string => args.join('');
 
-    const concatArgsIntoString = (...args: string[]): any => {
+   /*  const concatArgsIntoString = (...args: string[]): any => {
       
-      console.log(args); /* args.join('=') */;
-      //return args.join('=') 
-    } 
-    const convertObjectToSortedStringByKey = <T>(object: T): string =>
+      console.log(args); 
+
+    }  */
+/*     const convertObjectToSortedStringByKey = <T>(object: T): string =>
       Object.entries(object)
         .sort((a, b) => a[0].localeCompare(b[0]))
         .reduce((result, entry) => {
           if (typeof entry[1] === 'object') {
             return concatArgsIntoString(result, entry[0], convertObjectToSortedStringByKey(entry[1]));
           }
-         /*  console.log('entry',entry);
-          console.log('entry[0]', entry[0]);
-          console.log('entry[1]', entry[1]); */
+
           return concatArgsIntoString(entry[0], entry[1]);
         }, '');
 
-        let formattedBodyParams = convertObjectToSortedStringByKey(rest);
+        let formattedBodyParams = convertObjectToSortedStringByKey(rest); */
         //console.log(formattedBodyParams);
 
 
-    let md5SignatureString;
 
-    console.log( 'convertObjectToSortedStringByKey' ,convertObjectToSortedStringByKey(rest));
-    
+    const convertObjectFormattedString = <T>(object: T, method: string, url: string): string => {
+      const paramsArr = [];
+
+      const convertObjectParamsArr = <T>(object: T): void => {
+        Object.entries(object)
+        .forEach((entry) => {
+          if (typeof entry[1] === 'object') {
+            return convertObjectParamsArr(entry[1]);
+          }
+          paramsArr.push(entry.join('='))
+        });
+      };
+        
+      convertObjectParamsArr(object);
+      const paramsStr = paramsArr.sort((a, b) => a[0].localeCompare(b[0])).join('and');
+      const resultStr = `${method}${url}-${paramsStr}`;
+      return resultStr;
+    }
+
+    const md5SignatureString = convertObjectFormattedString(rest, method, url);
+
+    console.log(md5SignatureString);
 
     if(signature !== md5SignatureString) {
         return false
     }
     return true
-  }
+  };
 }
