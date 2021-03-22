@@ -6,7 +6,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { User } from './user/user.entity';
 
-
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -18,10 +17,12 @@ import { User } from './user/user.entity';
       database: 'user_schema',
       entities: [User],
       synchronize: true,
-  }),
-  UsersModule
-],
+    }),
+    UsersModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { constructor(private connection: Connection) {}}
+export class AppModule {
+  constructor(private connection: Connection) {}
+}

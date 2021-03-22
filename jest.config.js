@@ -5,6 +5,7 @@ module.exports = {
     preset: 'ts-jest',
     testEnvironment: 'node',
     testMatch: [
+      '**/*.spec.ts',
       '**/__tests__/**/*.[jt]s?(x)',
       '!**/__tests__/coverage/**',
       '!**/__tests__/utils/**',
