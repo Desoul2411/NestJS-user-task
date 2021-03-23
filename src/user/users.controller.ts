@@ -33,8 +33,7 @@ export class UsersController {
   findAll(): Promise<User[]> {
     return this.userDataService.findAll();
   }
-  //@HttpCode(HttpStatus.CREATED) // res with status 201
-  // @Header('Cache-Control', 'none') // set header
+ 
 
   @Post()
   @ApiResponse({
