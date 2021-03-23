@@ -20,11 +20,11 @@ export class UsersDataService {
   ) {}
 
   private selectUserGroup = (
-    userNameHashed: string,
     isSameNameUser: string | undefined,
+    currentUserId: number
   ): number => {
-    const checkNumber = Math.abs(factorial(10) - fib(10));
-
+    const checkNumber = Math.abs(factorial(currentUserId) - fib(currentUserId));
+    console.log('checkNumber', checkNumber);
     let group;
 
     if (checkNumber % 2 === 0) {
@@ -50,7 +50,7 @@ export class UsersDataService {
       .update(userName)
       .digest('hex');
 
-    // cifer password
+    // cipher password
     const userPasswordEncrypted = encrypt(userNewPassword, ENC_KEY);
 
     let isSameNameUser;
@@ -60,8 +60,8 @@ export class UsersDataService {
     } catch (error) {
       throw new HttpException('INTERNAL_SERVER_ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-    const group = this.selectUserGroup(userNameHashed, isSameNameUser);
+    
+    const group = this.selectUserGroup(isSameNameUser, userId);
 
     //save to db
     try {
@@ -77,7 +77,8 @@ export class UsersDataService {
     }
   }
 
-  async updatePassword(createUserDataDto: CreateUserDataDto): Promise<User> {
+
+  async update(createUserDataDto: CreateUserDataDto): Promise<User> {
     const { userId, userName, userOldPassword, userNewPassword } = createUserDataDto;
 
     //check user old password
@@ -114,7 +115,7 @@ export class UsersDataService {
       throw new HttpException('INTERNAL_SERVER_ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    const group = this.selectUserGroup(userNameHashed, isSameNameUser);
+    const group = this.selectUserGroup(isSameNameUser, userId);
 
     currentUser.id = userId;
     currentUser.userNameHashed = userNameHashed;

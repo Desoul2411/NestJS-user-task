@@ -77,9 +77,9 @@ export class UsersController {
     type: ErrorResponse,
   })
   @ApiBody({ type: CreateUserDataDto })
-  updatePassword(
+  update(
     @Body(new ValidationPipe()) createProductDto: CreateUserDataDto,
   ): Promise<User> {
-    return this.userDataService.updatePassword(createProductDto);
+    return this.userDataService.update(createProductDto);
   }
 }
