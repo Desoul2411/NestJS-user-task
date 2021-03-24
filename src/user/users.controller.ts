@@ -12,7 +12,7 @@ import { UsersDataService } from './users.service';
 import { SignatureGuard } from './guards/signature.guard';
 import { ValidationPipe } from './validation.pipe';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ErrorResponse } from './error.type';
+import { ErrorResponse403, ErrorResponse404, ErrorResponse400 } from './error.type';
 
 @ApiTags('user')
 @Controller('user')
@@ -28,7 +28,7 @@ export class UsersController {
   @ApiResponse({
     status: 404,
     description: 'Not found',
-    type: ErrorResponse,
+    type: ErrorResponse404,
   })
   findAll(): Promise<User[]> {
     return this.userDataService.findAll();
@@ -44,12 +44,12 @@ export class UsersController {
   @ApiResponse({
     status: 403,
     description: 'Access forbidden',
-    type: ErrorResponse,
+    type: ErrorResponse403,
   })
   @ApiResponse({
     status: 400,
     description: 'Validation failed',
-    type: ErrorResponse,
+    type: ErrorResponse400,
   })
   @ApiBody({ type: CreateUserDataDto }) // for Swagger
   //@UseGuards(SignatureGuard)
@@ -62,18 +62,18 @@ export class UsersController {
   @Put()
   @ApiResponse({
     status: 200,
-    description: 'Password updated',
+    description: 'User updated',
     type: User, // User - array []
   })
   @ApiResponse({
     status: 403,
     description: 'Access forbidden',
-    type: ErrorResponse,
+    type: ErrorResponse403,
   })
   @ApiResponse({
     status: 400,
     description: 'Validation failed',
-    type: ErrorResponse,
+    type: ErrorResponse400,
   })
   @ApiBody({ type: CreateUserDataDto })
   update(

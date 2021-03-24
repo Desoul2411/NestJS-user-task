@@ -2,10 +2,20 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
-import { createConnection, getConnection } from 'typeorm';
+import { CreateUserDataDto } from 'src/user/dto/create-user-data.dto';
+import { Connection, createConnection, getConnection } from 'typeorm';
 
-describe('AppController (e2e)', () => {
+const testDto: CreateUserDataDto = {
+  "userId": 19,
+  "userName":"Joe",
+  "userOldPassword":"veryStrongPassword",
+  "userNewPassword":"veryStrongPassword",
+  "signature": "3a54fc17e87520737253d899c9d4f90b"
+}
+
+describe('UsersController (e2e)', () => {
   let app: INestApplication;
+
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -13,13 +23,35 @@ describe('AppController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.get(Connection);
     await app.init();
+    
   });
 
-  it('/ (GET)', () => {
+  it('/user (POST) - check that response body is defined', async (done) => {
     return request(app.getHttpServer())
-      .get('/')
+      .post('/user')
+      .send(testDto)
+      .expect(201)
+      .then(({body}: request.Response) => {
+        expect(body).toBeDefined();
+        done();
+      })
+  });
+
+  it('/user (PUT) - check that response body is defined', async (done) => {
+    return request(app.getHttpServer())
+      .put('/user')
+      .send(testDto)
       .expect(200)
-      .expect('Hello World!');
+      .then(({body}: request.Response) => {
+        expect(body).toBeDefined();
+        done();
+      })
+  });
+  
+
+  afterEach( async() => {
+    await app.close()
   });
 });
