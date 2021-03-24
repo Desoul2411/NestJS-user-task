@@ -1,32 +1,39 @@
-export type UserId = number;
+/* export type UserId = number;
 export type UserName = string;
 export type UserPassword = string;
-export type UserGroup = number;
+export type UserGroup = number; */
+
+export interface UserInterface  {    
+    userId: number;
+    userName: string;
+    userPassword: string;
+    userGroup: number;
+}
 
 
-export class UserEntity {
+export class UserEntity implements UserInterface {
 	constructor(
-		private readonly _userId: UserId,
-		private readonly _userName: UserName,
-		private readonly _userPassword: UserPassword,
-        private readonly _group: UserGroup
+		private readonly _userId,
+		private readonly _userName,
+		private readonly _userPassword,
+        private readonly _userGroup
 	) {}
 
 
-    get userId(): UserId {
+    get userId() {
         return this._userId
     }
 
-    get userName(): UserName {
+    get userName() {
         return this._userName;
     }
 
-    get userPasword(): UserPassword {
+    get userPassword() {
         return this._userPassword;
     }
 
-    get group(): UserGroup {
-        return this._group;
+    get userGroup() {
+        return this._userGroup;
     }
 
 
