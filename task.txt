@@ -1,6 +1,6 @@
 Написать небольшой сервис, который имеет один post запрос.  
 Использовать domain driven development.
-Прикрутить сваггер.
+Прикрутить сваггер. +
 Данные будут сохраняться в mysql.  +
 При разворачивании проекта необходимо использовать докер.
 
@@ -54,6 +54,13 @@ id userNameHashed userPasswordEncrypted group
 Покрыть юнит и е2е тестами
 
 
+
+
+
+
+
+
+
 //encrypt code
 https://gist.github.com/siwalikm/8311cf0a287b98ef67c73c1b03b47154
 
@@ -68,3 +75,85 @@ https://gist.github.com/siwalikm/8311cf0a287b98ef67c73c1b03b47154
 
 http://localhost:3000/swagger/
 http://localhost:3000/api/v1/user
+
+
+
+
+DOCKER and MySQL:
+
+login docker:
+sudo su -${user}
+
+
+CREATE DB CONTAINER:
+docker container run -d --name mysqldb -p 3307:3307 -e MYSQL_ROOT_PASSWORD=p1 mysql:latest
+docker exec -it mysqldb bash   - need  to input every time before the login
+
+
+ENTER THE DB:
+mysql -u root -p1             - login with password "1"  - for enter to localdb (bo need to "docker exec -it mysqldb bash" before it);
+mysql -u root -p1              - login with password "p1" to new created db (need to "docker exec -it mysqldb bash" before it)
+
+exit  - exit from MySQL terminal
+
+docker rmi  -f <image id or name>  - delete image
+docker rm  -f <container id or name>  - delete image
+
+docker stop <container id or name> - stop container 
+docker start <container id or name> - start container 
+
+
+
+
+GET DB IP (input one by one):
+docker inspect -f \
+'{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
+75000c343eb7      //mysql container id
+
+
+
+
+NOW we are in MySQL (inner MySqlCommands - ";" - is mandatory ro use in the end of string ):
+create database company;
+
+drop database company;
+
+use company;
+
+create table team ( id int not null, name text, primary key (id) );
+
+
+insert into team (id , name) values (1, 'Thetips4you');
+
+insert into team (id , name) values (2, 'King');
+
+insert into team (id , name) values (3, 'Queen');
+
+select * from team;
+
+
+
+
+
+
+
+DOCKER COMMANDS
+-it is used to list all the running containers.
+docker container ls -a
+
+-To show all containers use the given command:
+docker ps -a
+
+- To show all images
+ docker images
+
+
+-to stop all the Docker containers (force)
+docker rm -f $(docker ps -a -q)  
+
+
+
+
+DELETE CONTAINER
+docker rm -f lucid_blackwell  -       lucid_blackwell - name or id
+

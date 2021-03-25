@@ -24,7 +24,6 @@ export class UsersDataService {
     currentUserId: number
   ): number => {
     const checkNumber = Math.abs(factorial(currentUserId) - fib(currentUserId));
-    console.log('checkNumber', checkNumber);
     let group;
 
     if (checkNumber % 2 === 0) {
@@ -32,7 +31,7 @@ export class UsersDataService {
     } else {
       group = isSameNameUser ? 2 : 3;
     }
-
+    
     return group;
   };
 
