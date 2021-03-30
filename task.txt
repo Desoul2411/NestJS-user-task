@@ -79,6 +79,20 @@ http://localhost:3000/api/v1/user
 
 
 
+
+//create docker image and run container from Dockerfile:
+docker build -t prakhar1989/foodtrucks-web .
+
+//start app
+ docker run -P prakhar1989/foodtrucks-web
+
+
+//Now your up is running on http://172.17.0.3:3000/   - 3000 - default port
+
+
+
+
+
 DOCKER and MySQL:
 
 login docker:
@@ -92,7 +106,7 @@ docker exec -it mysqldb bash   - need  to input every time before the login
 
 ENTER THE DB:
 mysql -u root -p1             - login with password "1"  - for enter to localdb (bo need to "docker exec -it mysqldb bash" before it);
-mysql -u root -p1              - login with password "p1" to new created db (need to "docker exec -it mysqldb bash" before it)
+mysql -u root -pp1              - login with password "p1" to new created db (need to "docker exec -it mysqldb bash" before it)
 
 exit  - exit from MySQL terminal
 
@@ -110,15 +124,44 @@ docker inspect -f \
 '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
 75000c343eb7      //mysql container id
 
+OR sudo docker inspect 3816436e9715   - 3816436e9715 - container's id
 
 
 
 NOW we are in MySQL (inner MySqlCommands - ";" - is mandatory ro use in the end of string ):
-create database company;
+create database user_schema;
 
-drop database company;
+use user_schema;  - to SAVE changes!;
 
-use company;
+
+
+
+NOW we can coonect to db using hostname:172.17.0.2 and password p1
+//app db settings from app.module.ts:
+ TypeOrmModule.forRoot({
+      type: 'mysql',
+      //host: 'localhost',
+      host: '172.17.0.2',
+      port: 3306,
+      username: 'root',
+      //password: 'p1',
+      password: 'p1',
+      database: 'user_schema',
+      //database:'company',
+      entities: [User],
+      synchronize: true,
+
+
+
+
+
+// Now run app container and db container and get down to work!)
+
+
+
+drop database user_schema;    - to delete db
+
+
 
 create table team ( id int not null, name text, primary key (id) );
 
