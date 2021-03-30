@@ -17,3 +17,10 @@ export const decrypt = (encryptedPassword: string, ENC_KEY: string): string => {
   const decrypted = decipher.update(password, 'base64', 'utf8');
   return decrypted + decipher.final('utf8');
 };
+
+export const hashToSha256 = (userName:string, HASH_SECRET: string):string => {
+  return crypto
+  .createHmac('sha256', HASH_SECRET)
+  .update(userName)
+  .digest('hex');
+};

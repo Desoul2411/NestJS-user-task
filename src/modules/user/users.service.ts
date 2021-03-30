@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { CreateUserDataDto } from './dto/create-user-data.dto';
-import { encrypt, decrypt } from '../utils/functions-helpers/cipher.utils';
+import { encrypt, decrypt, hashToSha256 } from '../utils/functions-helpers/cipher.utils';
 import { factorial, fib } from '../utils/functions-helpers/math.utils';
 
 require('dotenv').config();
@@ -19,7 +19,7 @@ export class UsersDataService {
     private usersRepository: Repository<User>,
   ) {}
 
-  private selectUserGroup = (
+  selectUserGroup = (
     isSameNameUser: string | undefined,
     currentUserId: number
   ): number => {
@@ -45,10 +45,7 @@ export class UsersDataService {
     const { userId, userName, userNewPassword } = createUserDataDto;
 
     //hash username
-    const userNameHashed = crypto
-      .createHmac('sha256', HASH_SECRET)
-      .update(userName)
-      .digest('hex');
+    const userNameHashed = hashToSha256(userName, HASH_SECRET);
 
     // cipher password
     const userPasswordEncrypted = encrypt(userNewPassword, ENC_KEY);
@@ -82,29 +79,22 @@ export class UsersDataService {
     const { userId, userName, userOldPassword, userNewPassword } = createUserDataDto;
 
     //check user old password
-    const oldPassword = userOldPassword;
     const currentUser = await this.usersRepository.findOne(userId);
 
     if (!currentUser) {
       throw new HttpException('No such user', HttpStatus.NOT_FOUND);
     }
 
-    const decryptedPasword = decrypt(
-      currentUser.userPasswordEncrypted,
-      ENC_KEY,
-    );
+    const decryptedPasword = decrypt(currentUser.userPasswordEncrypted,ENC_KEY);
 
-    if (oldPassword !== decryptedPasword) {
+    if (userOldPassword !== decryptedPasword) {
       console.log("PASSWORDS DIDN'T MATCH");
       throw new HttpException('Invalid old password!', HttpStatus.FORBIDDEN);
     }
 
     //if passwords match
     //hash username
-    const userNameHashed = crypto
-      .createHmac('sha256', HASH_SECRET)
-      .update(userName)
-      .digest('hex');
+    const userNameHashed = hashToSha256(userName, HASH_SECRET);
 
     const userPasswordEncrypted = encrypt(userNewPassword, ENC_KEY);
     let isSameNameUser;
