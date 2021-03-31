@@ -1,7 +1,7 @@
 import { HttpStatus, HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './user.entity';
+import { User } from './user.orm.entity';
 import { CreateUserDataDto } from './dto/create-user-data.dto';
 import { encrypt, decrypt, hashToSha256 } from '../utils/functions-helpers/cipher.utils';
 import { factorial, fib } from '../utils/functions-helpers/math.utils';
@@ -39,10 +39,11 @@ export class UsersDataService {
 
   async findAll(): Promise<User[]> {
     return this.usersRepository.find();
+    
   }
 
   async create(createUserDataDto: CreateUserDataDto): Promise<User> {
-    const { userId, userName, userNewPassword } = createUserDataDto;
+    const { userName, userNewPassword } = createUserDataDto;
 
     //hash username
     const userNameHashed = hashToSha256(userName, HASH_SECRET);
@@ -50,23 +51,11 @@ export class UsersDataService {
     // cipher password
     const userPasswordEncrypted = encrypt(userNewPassword, ENC_KEY);
 
-    let isSameNameUser;
-
-    try {
-      isSameNameUser = await this.usersRepository.findOne({ userNameHashed });
-    } catch (error) {
-      throw new HttpException('INTERNAL_SERVER_ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    
-    const group = this.selectUserGroup(isSameNameUser, userId);
-
-    //save to db
     try {
       const user = new User();
-      user.id = userId;
       user.userNameHashed = userNameHashed;
       user.userPasswordEncrypted = userPasswordEncrypted;
-      user.group = group;
+      user.group = null;
 
       return this.usersRepository.save(user);
     } catch (error) {
@@ -75,10 +64,9 @@ export class UsersDataService {
   }
 
 
-  async update(createUserDataDto: CreateUserDataDto): Promise<User> {
-    const { userId, userName, userOldPassword, userNewPassword } = createUserDataDto;
+  async update(userId: number, createUserDataDto: CreateUserDataDto): Promise<User> {
+    const { userName, userOldPassword, userNewPassword } = createUserDataDto;
 
-    //check user old password
     const currentUser = await this.usersRepository.findOne(userId);
 
     if (!currentUser) {
@@ -92,8 +80,6 @@ export class UsersDataService {
       throw new HttpException('Invalid old password!', HttpStatus.FORBIDDEN);
     }
 
-    //if passwords match
-    //hash username
     const userNameHashed = hashToSha256(userName, HASH_SECRET);
 
     const userPasswordEncrypted = encrypt(userNewPassword, ENC_KEY);
@@ -107,7 +93,6 @@ export class UsersDataService {
 
     const group = this.selectUserGroup(isSameNameUser, userId);
 
-    currentUser.id = userId;
     currentUser.userNameHashed = userNameHashed;
     currentUser.userPasswordEncrypted = userPasswordEncrypted;
     currentUser.group = group;

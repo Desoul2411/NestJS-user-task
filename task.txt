@@ -6,7 +6,7 @@
 
 POST запрос 'api/v1/user' принимает след. данные:
 {
-  userId: number,
+  userId: number,   // auto increment
   userName: string,
   userOldPassword: string,
   userNewPassword: string,

@@ -11,7 +11,6 @@ export class SignatureGuard implements CanActivate {
     const { method, url } = request;
     const { signature, ...rest } = request.body;
 
-
     const convertObjectFormattedString = <T>(
       object: T,
       method: string,
@@ -32,7 +31,8 @@ export class SignatureGuard implements CanActivate {
       const paramsStr = paramsArr
         .sort((a, b) => a[0].localeCompare(b[0]))
         .join('and');
-      const resultStr = `${method}${url}-${paramsStr}`;
+      const resultStr = `${method}and${url.substr(1)}-${paramsStr}`;
+      console.log(resultStr);
       return resultStr;
     };
 

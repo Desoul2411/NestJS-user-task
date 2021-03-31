@@ -2,7 +2,7 @@ import { Test , TestingModule} from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersDataService } from './users.service';
 import { CreateUserDataDto } from './dto/create-user-data.dto';
-import { User } from './user.entity';
+import { User } from './user.orm.entity';
 //import { createConnection, getConnection, getRepository, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import * as mathUtils from '../utils/functions-helpers/math.utils';
@@ -40,12 +40,28 @@ describe('UsersService', () => {
   });
 
   describe('selectUserGroup', () => {
-    it('should return 1 if', () => {
+    it('should return 1 ', () => {
 
       (mathUtils.factorial as jest.Mock).mockImplementation(() => 3);
       (mathUtils.fib as jest.Mock).mockImplementation(() => 1);
 
       expect(usersDataService.selectUserGroup('John',0)).toBe(1);
+    });
+
+    it('should return 2 ', () => {
+
+      (mathUtils.factorial as jest.Mock).mockImplementation(() => 3);
+      (mathUtils.fib as jest.Mock).mockImplementation(() => 2);
+
+      expect(usersDataService.selectUserGroup('John',0)).toBe(2);
+    });
+
+    it('should return 3', () => {
+
+      (mathUtils.factorial as jest.Mock).mockImplementation(() => 3);
+      (mathUtils.fib as jest.Mock).mockImplementation(() => 2);
+
+      expect(usersDataService.selectUserGroup(undefined,0)).toBe(3);
     });
   });
 

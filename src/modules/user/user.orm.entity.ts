@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class User {
-  @ApiProperty({ example: 1, description: 'User id' }) // for Swagger
+  @ApiProperty({ example: 1, description: 'UserId' }) // for Swagger
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -22,6 +22,6 @@ export class User {
   userPasswordEncrypted: string;
 
   @ApiProperty({ example: '2', description: 'user group number' })
-  @Column()
-  group: number;
+  @Column({default: null})
+  group: number
 }

@@ -3,25 +3,45 @@ export type UserName = string;
 export type UserPassword = string;
 export type UserGroup = number; */
 
-export interface UserInterface  {    
-    userId: number;
-    userName: string;
-    userPassword: string;
-    userGroup: number;
-}
+/* export type UserInterface  {    
+    _id: number;
+    _userName: string;
+    _userOldPassword: string;
+    _userNewPassword: string;
+    _signature: string;
+    _userNameHashed: string;
+    _userPasswordEncrypted: string,
+    _group: number
+} */
+
+export type UserId = number;
+export type UserName = string;
+export type UserOldPassword = string;
+export type UserNewPassword = string;
+export type Signature = string; 
+
+export type UserNameHashed = string;
+export type UserPasswordEncrypted = string;
+export type Group = number;
 
 
-export class UserEntity implements UserInterface {
+
+export class UserEntity {
 	constructor(
-		private readonly _userId,
-		private readonly _userName,
-		private readonly _userPassword,
-        private readonly _userGroup
+		private readonly _id: UserId,
+        private readonly _userName: UserName,
+		private readonly _userOldPassword: UserOldPassword,
+		private readonly _userNewPassword: UserNewPassword,
+        private readonly _signature: Signature,
+
+        private readonly _userNameHashed: string,
+        private readonly _userPasswordEncrypted: string,
+        private readonly _userGroup: number,
 	) {}
 
 
     get userId() {
-        return this._userId
+        return this._id
     }
 
     get userName() {
@@ -29,17 +49,25 @@ export class UserEntity implements UserInterface {
     }
 
     get userPassword() {
-        return this._userPassword;
+        return this._userOldPassword;
     }
 
     get userGroup() {
         return this._userGroup;
     }
 
+    public createUser() {
 
-    public selectUserGroup() {
-        
     }
+
+    public updateUser() {
+
+    }
+
+
+  /*   public selectUserGroup(): number {
+        
+    } */
 
 
 

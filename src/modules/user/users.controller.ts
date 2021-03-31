@@ -5,9 +5,10 @@ import {
   Post,
   UseGuards,
   Put,
+  Param,
 } from '@nestjs/common';
 import { CreateUserDataDto } from './dto/create-user-data.dto';
-import { User } from './user.entity';
+import { User } from './user.orm.entity';
 import { UsersDataService } from './users.service';
 import { SignatureGuard } from './guards/signature.guard';
 import { ValidationPipe } from './validation.pipe';
@@ -52,18 +53,18 @@ export class UsersController {
     type: ErrorResponse,
   })
   @ApiBody({ type: CreateUserDataDto }) // for Swagger
-  //@UseGuards(SignatureGuard)
   create(
     @Body(new ValidationPipe()) createProductDto: CreateUserDataDto,
   ): Promise<User> {
     return this.userDataService.create(createProductDto);
   }
 
-  @Put()
+
+  @Put(':id')
   @ApiResponse({
     status: 200,
     description: 'Password updated',
-    type: User, // User - array []
+    type: User, 
   })
   @ApiResponse({
     status: 403,
@@ -76,9 +77,11 @@ export class UsersController {
     type: ErrorResponse,
   })
   @ApiBody({ type: CreateUserDataDto })
+  @UseGuards(SignatureGuard)
   update(
+    @Param('id') id: number,
     @Body(new ValidationPipe()) createProductDto: CreateUserDataDto,
   ): Promise<User> {
-    return this.userDataService.update(createProductDto);
+    return this.userDataService.update(id,createProductDto);
   }
 }
