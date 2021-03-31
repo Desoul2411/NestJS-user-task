@@ -27,20 +27,45 @@ export type Group = number;
 
 
 export class UserEntity {
+    
+    
 	constructor(
-		private readonly _id: UserId,
+	/* 	private readonly _id: UserId,
         private readonly _userName: UserName,
 		private readonly _userOldPassword: UserOldPassword,
 		private readonly _userNewPassword: UserNewPassword,
-        private readonly _signature: Signature,
-
-        private readonly _userNameHashed: string,
-        private readonly _userPasswordEncrypted: string,
-        private readonly _userGroup: number,
+        private readonly _signature: Signature, */
+        private readonly _id: UserId,
+        private readonly _userNameHashed: UserNameHashed,
+        private readonly _userPasswordEncrypted: UserPasswordEncrypted,
+        private readonly _group: Group,
 	) {}
 
 
-    get userId() {
+
+    get id(): UserId {
+        return this._id;
+    }
+
+    get userNameHashed(): UserNameHashed {
+        return this._userNameHashed;
+    }
+
+    get userPasswordEncrypted(): UserPasswordEncrypted {
+        return this._userPasswordEncrypted;
+    }
+    
+    get group(): Group {
+        return this._group;
+    }
+
+
+     /* get signature(): Signature {
+        return this._signature;
+    } */
+
+
+/*     get userId() {
         return this._id
     }
 
@@ -62,7 +87,7 @@ export class UserEntity {
 
     public updateUser() {
 
-    }
+    } */
 
 
   /*   public selectUserGroup(): number {

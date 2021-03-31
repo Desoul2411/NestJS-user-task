@@ -2,7 +2,7 @@ import { Test , TestingModule} from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersDataService } from './users.service';
 import { CreateUserDataDto } from './dto/create-user-data.dto';
-import { User } from './user.orm.entity';
+import { UserOrmEntity } from './user.orm.entity';
 //import { createConnection, getConnection, getRepository, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -19,7 +19,7 @@ describe('UsersController', () => {
         providers: [
           UsersDataService
         ,{
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(UserOrmEntity),
           useValue: mockValue,
         }],
       }).compile();

@@ -1,7 +1,7 @@
 import { HttpStatus, HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './user.orm.entity';
+import { UserOrmEntity } from './user.orm.entity';
 import { CreateUserDataDto } from './dto/create-user-data.dto';
 import { encrypt, decrypt, hashToSha256 } from '../utils/functions-helpers/cipher.utils';
 import { factorial, fib } from '../utils/functions-helpers/math.utils';
@@ -15,8 +15,8 @@ const HASH_SECRET = process.env.HASH_SECRET;
 @Injectable()
 export class UsersDataService {
   constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    @InjectRepository(UserOrmEntity)
+    private usersRepository: Repository<UserOrmEntity>,
   ) {}
 
   selectUserGroup = (
@@ -37,12 +37,12 @@ export class UsersDataService {
   };
 
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<UserOrmEntity[]> {
     return this.usersRepository.find();
     
   }
 
-  async create(createUserDataDto: CreateUserDataDto): Promise<User> {
+  async create(createUserDataDto: CreateUserDataDto): Promise<UserOrmEntity> {
     const { userName, userNewPassword } = createUserDataDto;
 
     //hash username
@@ -52,7 +52,7 @@ export class UsersDataService {
     const userPasswordEncrypted = encrypt(userNewPassword, ENC_KEY);
 
     try {
-      const user = new User();
+      const user = new UserOrmEntity();
       user.userNameHashed = userNameHashed;
       user.userPasswordEncrypted = userPasswordEncrypted;
       user.group = null;
@@ -64,7 +64,7 @@ export class UsersDataService {
   }
 
 
-  async update(userId: number, createUserDataDto: CreateUserDataDto): Promise<User> {
+  async update(userId: number, createUserDataDto: CreateUserDataDto): Promise<UserOrmEntity> {
     const { userName, userOldPassword, userNewPassword } = createUserDataDto;
 
     const currentUser = await this.usersRepository.findOne(userId);

@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UsersModule } from './modules/user/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
-import { User } from './modules/user/user.orm.entity';
+import { UserOrmEntity } from './modules/user/user.orm.entity';
+import { UserPersistenceModule } from './modules/user/user-persistance.controller';
 
 @Module({
   imports: [
@@ -15,13 +14,12 @@ import { User } from './modules/user/user.orm.entity';
       username: 'root',
       password: '1',
       database: 'user_schema',
-      entities: [User],
+      entities: [UserOrmEntity],
       synchronize: true,
     }),
     UsersModule,
+    UserPersistenceModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {
   constructor(private connection: Connection) {}
