@@ -4,5 +4,5 @@ import { CreateUserDataDto } from 'src/modules/user-web/dto/create-user-data.dto
 
 
 export interface CreateUserPort {
-	createUser(createUserDto: CreateUserDataDto): Promise<UserEntity>;
+	createUser(userData: CreateUserDataDto): Promise<UserEntity>;
 }

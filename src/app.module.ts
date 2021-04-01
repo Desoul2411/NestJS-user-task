@@ -3,7 +3,7 @@ import { UsersModule } from './modules/user-web/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { UserOrmEntity } from './modules/user-persistence/user.orm.entity';
-import { UserPersistenceModule } from './modules/user-persistence/user-persistence.module';
+import { UserPersistenceModule } from './modules/user-persistence/user-persistance.module';
 
 @Module({
   imports: [

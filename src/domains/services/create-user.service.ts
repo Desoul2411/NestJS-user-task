@@ -1,7 +1,3 @@
-/* 
-import {LoadAccountPort} from '../ports/out/load-account.port';
-import {UpdateAccountStatePort} from '../ports/out/update-account-state.port'; */
-
 import { UserEntity } from '../entities/user.entity';
 import { CreateUserCommand } from '../ports/in/create-user.command';
 import { CreateUserUseCase } from '../ports/in/create-user.use-case';

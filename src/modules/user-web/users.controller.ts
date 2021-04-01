@@ -17,13 +17,17 @@ import { ErrorResponse403, ErrorResponse404, ErrorResponse400 } from './error.ty
 import { CreateUserUseCase, CreateUserUseCaseSymbol } from 'src/domains/ports/in/create-user.use-case';
 import { CreateUserCommand } from 'src/domains/ports/in/create-user.command';
 import { UserOrmEntity } from '../user-persistence/user.orm.entity';
+import { UpdateUserUseCase, UpdateUserUseCaseSymbol } from 'src/domains/ports/in/update-user.use-case';
+import { UpdateUserCommand } from 'src/domains/ports/in/update-user.command';
 
 
 
 @Controller('user')
 export class UsersController {
-  constructor(@Inject(CreateUserUseCaseSymbol) private readonly _userService: CreateUserUseCase) {}
-
+  constructor(
+    @Inject(CreateUserUseCaseSymbol) private readonly _createUserService: CreateUserUseCase,
+    @Inject(UpdateUserUseCaseSymbol) private readonly _userService: UpdateUserUseCase,
+  ) {}
 
 
   @ApiResponse({
@@ -45,15 +49,46 @@ export class UsersController {
   @Post()
   async createUser(@Body(new ValidationPipe()) createUserDataDto: CreateUserDataDto,): Promise<UserOrmEntity> {
 
-/*     const { userName, userNewPassword } = createUserDataDto; */
-
     const createUserCommand = new CreateUserCommand(
       createUserDataDto
     )
 
-    return this._userService.createUser(createUserCommand);
+    return this._createUserService.createUser(createUserCommand);
+  }
+
+
+  @Put(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'Password updated',
+    type: UserOrmEntity, 
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Access forbidden',
+    type: ErrorResponse403,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation failed',
+    type: ErrorResponse400,
+  })
+  @ApiBody({ type: CreateUserDataDto })
+  //@UseGuards(SignatureGuard)
+  async updateUser(
+    @Param('id') id: number,
+    @Body(new ValidationPipe()) createUserDataDto: CreateUserDataDto,
+  ): Promise<UserOrmEntity> {
+    const updateUserCommand = new UpdateUserCommand(
+      id,
+      createUserDataDto
+    )
+
+    return this._userService.updateUser(updateUserCommand);
   }
 }
+
+
 
 
 
