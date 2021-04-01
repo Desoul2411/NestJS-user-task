@@ -8,10 +8,8 @@ POST запрос 'api/v1/user' принимает след. данные:
 {
   userId: number,   // auto increment
   userName: string,
-  userOldPassword: string,
   userNewPassword: string,
-  signature: string,
-}
+  signature: string,  //? в POST и PUT?
 
 userId, userName, userOldPassword, userNewPassword - генерируешь сам   +
 signature - секьюрити для запроса, генерируется след. образом:    

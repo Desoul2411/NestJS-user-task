@@ -1,9 +1,8 @@
-import { Test , TestingModule} from '@nestjs/testing';
+/* import { Test , TestingModule} from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersDataService } from './users.service';
 import { CreateUserDataDto } from './dto/create-user-data.dto';
-import { User } from './user.orm.entity';
-//import { createConnection, getConnection, getRepository, Repository } from 'typeorm';
+import { User } from './user.orm.entity';;
 import { getRepositoryToken } from '@nestjs/typeorm';
 import * as mathUtils from '../utils/functions-helpers/math.utils';
 
@@ -75,7 +74,7 @@ describe('UsersService', () => {
 
 
 
-
+ */
 
 
 

@@ -4,8 +4,9 @@ import { Repository } from "typeorm";
 import { UserOrmEntity } from "./user.orm.entity";
 import { UserEntity, UserId } from '../../domains/entities/user.entity';
 import { encrypt, hashToSha256 } from "../utils/functions-helpers/cipher.utils";
-import { CreateUserDataDto } from "./dto/create-user-data.dto";
+import { CreateUserDataDto } from "../user-web/dto/create-user-data.dto";
 import { UserMapper } from './user.mapper';
+import { CreateUserPort } from "src/domains/ports/out/create-user.port";
 
 require('dotenv').config();
 const crypto = require('crypto');
@@ -15,7 +16,7 @@ const HASH_SECRET = process.env.HASH_SECRET;
 
 
 @Injectable()
-export class UserPersistenceAdapterService {   // must implement port from ports/out/..
+export class UserPersistenceAdapterService implements CreateUserPort {   // must implement port from ports/out/..
 	constructor(
 		@InjectRepository(UserOrmEntity)
 		private _userRepository: Repository<UserOrmEntity>,
@@ -36,7 +37,8 @@ export class UserPersistenceAdapterService {   // must implement port from ports
             user.userPasswordEncrypted = userPasswordEncrypted;
             user.group = null;
 
-            /*  return this._userRepository.save(user); */
+            await this._userRepository.save(user);
+
             //map user to domain
             return UserMapper.mapToDomain(user);
         } catch (error) {

@@ -2,7 +2,7 @@ import { HttpStatus, HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserOrmEntity } from './user.orm.entity';
-import { CreateUserDataDto } from './dto/create-user-data.dto';
+import { CreateUserDataDto } from '../user-web/dto/create-user-data.dto';
 import { encrypt, decrypt, hashToSha256 } from '../utils/functions-helpers/cipher.utils';
 import { factorial, fib } from '../utils/functions-helpers/math.utils';
 

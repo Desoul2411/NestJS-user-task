@@ -1,25 +1,11 @@
-/* export type UserId = number;
-export type UserName = string;
-export type UserPassword = string;
-export type UserGroup = number; */
 
-/* export type UserInterface  {    
-    _id: number;
-    _userName: string;
-    _userOldPassword: string;
-    _userNewPassword: string;
-    _signature: string;
-    _userNameHashed: string;
-    _userPasswordEncrypted: string,
-    _group: number
-} */
-
-export type UserId = number;
 export type UserName = string;
 export type UserOldPassword = string;
 export type UserNewPassword = string;
 export type Signature = string; 
+ 
 
+export type UserId = number | null;
 export type UserNameHashed = string;
 export type UserPasswordEncrypted = string;
 export type Group = number;
@@ -35,10 +21,11 @@ export class UserEntity {
 		private readonly _userOldPassword: UserOldPassword,
 		private readonly _userNewPassword: UserNewPassword,
         private readonly _signature: Signature, */
-        private readonly _id: UserId,
+      /*   private readonly _userOldPassword: UserOldPassword, */
         private readonly _userNameHashed: UserNameHashed,
         private readonly _userPasswordEncrypted: UserPasswordEncrypted,
         private readonly _group: Group,
+        private readonly _id?: UserId
 	) {}
 
 

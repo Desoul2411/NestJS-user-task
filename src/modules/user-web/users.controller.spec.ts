@@ -1,9 +1,8 @@
-import { Test , TestingModule} from '@nestjs/testing';
-import { UsersController } from './users.controller';
-import { UsersDataService } from './users.service';
+/* import { Test , TestingModule} from '@nestjs/testing';
+import { UsersController } from '../user-persistence/users.controller';
+import { UsersDataService } from '../user-persistence/users.service';
 import { CreateUserDataDto } from './dto/create-user-data.dto';
-import { UserOrmEntity } from './user.orm.entity';
-//import { createConnection, getConnection, getRepository, Repository } from 'typeorm';
+import { UserOrmEntity } from '../user-persistence/user.orm.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('UsersController', () => {
@@ -73,7 +72,7 @@ describe('UsersController', () => {
     });
   });
 
-
+ */
   /* describe('update', () => {
     it('should be a function and exist in UsersController', () => {
       expect(typeof usersController.create).toBe('function');
@@ -94,6 +93,6 @@ describe('UsersController', () => {
       expect(await usersController.update(createUserDataDto)).toBe(result);
     });
   }); */
-});
+//});
 
  

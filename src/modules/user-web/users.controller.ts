@@ -9,14 +9,14 @@ import {
   Inject,
 } from '@nestjs/common';
 import { CreateUserDataDto } from './dto/create-user-data.dto';
-import { UserOrmEntity } from './user.orm.entity';
-import { UsersDataService } from './users.service';
+/* import { UsersDataService } from './users.service'; */
 import { SignatureGuard } from './guards/signature.guard';
 import { ValidationPipe } from './validation.pipe';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ErrorResponse } from './error.type';
 import { CreateUserUseCase, CreateUserUseCaseSymbol } from 'src/domains/ports/in/create-user.use-case';
 import { CreateUserCommand } from 'src/domains/ports/in/create-user.command';
+import { UserOrmEntity } from '../user-persistence/user.orm.entity';
 
 
 
@@ -29,11 +29,11 @@ export class UsersController {
     @Body(new ValidationPipe()) createUserDataDto: CreateUserDataDto,
   ): Promise<UserOrmEntity> {
 
-    const { userName, userNewPassword } = createUserDataDto;
+/*     const { userName, userNewPassword } = createUserDataDto; */
+ 
 
     const createUserCommand = new CreateUserCommand(
-      userName,
-      userNewPassword
+      createUserDataDto
     )
 
     return this._userService.createUser(createUserCommand);

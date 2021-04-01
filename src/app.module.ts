@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from './modules/user/users.module';
+import { UsersModule } from './modules/user-web/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
-import { UserOrmEntity } from './modules/user/user.orm.entity';
-import { UserPersistenceModule } from './modules/user/user-persistance.controller';
+import { UserOrmEntity } from './modules/user-persistence/user.orm.entity';
+import { UserPersistenceModule } from './modules/user-persistence/user-persistence.module';
 
 @Module({
   imports: [

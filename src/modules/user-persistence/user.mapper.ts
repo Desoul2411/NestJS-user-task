@@ -5,11 +5,11 @@ export class UserMapper {
     static mapToDomain(
         user: UserOrmEntity
     ): UserEntity {
-        return new UserEntity(
-            user.id,
+        return new UserEntity(  
             user.userNameHashed,
             user.userPasswordEncrypted,
-            user.group
+            user.group,
+            user.id
         )
     }
 

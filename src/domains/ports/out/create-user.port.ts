@@ -1,6 +1,8 @@
 
-import { UserEntity,  } from 'src/domains/entities/user.entity';
+import { UserEntity } from 'src/domains/entities/user.entity';
+import { CreateUserDataDto } from 'src/modules/user-web/dto/create-user-data.dto';
 
-export interface LoadAccountPort {
-	loadAccount(accountId: AccountId): Promise<UserEntity>;
+
+export interface CreateUserPort {
+	createUser(createUserDto: CreateUserDataDto): Promise<UserEntity>;
 }
