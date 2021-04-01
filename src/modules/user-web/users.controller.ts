@@ -13,7 +13,7 @@ import { CreateUserDataDto } from './dto/create-user-data.dto';
 import { SignatureGuard } from './guards/signature.guard';
 import { ValidationPipe } from './validation.pipe';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ErrorResponse } from './error.type';
+import { ErrorResponse403, ErrorResponse404, ErrorResponse400 } from './error.type';
 import { CreateUserUseCase, CreateUserUseCaseSymbol } from 'src/domains/ports/in/create-user.use-case';
 import { CreateUserCommand } from 'src/domains/ports/in/create-user.command';
 import { UserOrmEntity } from '../user-persistence/user.orm.entity';
@@ -24,13 +24,28 @@ import { UserOrmEntity } from '../user-persistence/user.orm.entity';
 export class UsersController {
   constructor(@Inject(CreateUserUseCaseSymbol) private readonly _userService: CreateUserUseCase) {}
 
+
+
+  @ApiResponse({
+    status: 200,
+    description: 'User updated',
+    type: UserOrmEntity, // User - array []
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Access forbidden',
+    type: ErrorResponse403,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation failed',
+    type: ErrorResponse400,
+  })
+  @ApiBody({ type: CreateUserDataDto }) // for Swagger
   @Post()
-  async createUser(
-    @Body(new ValidationPipe()) createUserDataDto: CreateUserDataDto,
-  ): Promise<UserOrmEntity> {
+  async createUser(@Body(new ValidationPipe()) createUserDataDto: CreateUserDataDto,): Promise<UserOrmEntity> {
 
 /*     const { userName, userNewPassword } = createUserDataDto; */
- 
 
     const createUserCommand = new CreateUserCommand(
       createUserDataDto
@@ -38,7 +53,6 @@ export class UsersController {
 
     return this._userService.createUser(createUserCommand);
   }
-
 }
 
 
