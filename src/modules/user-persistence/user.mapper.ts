@@ -3,16 +3,42 @@ import { UserOrmEntity } from './user.orm.entity';
 
 export class UserMapper {
     static mapToDomain(
-        user: UserOrmEntity
+        currentUser: UserOrmEntity,
+        currentUserDecryptedPasword: string,
+        userId: number,
+        userNameHashed: string,
+        userOldPassword: string,
+        userPasswordEncrypted: string,
+        isSameNameUser: string
     ): UserEntity {
         return new UserEntity(  
-            user.userNameHashed,
-            user.userPasswordEncrypted,
-            user.group,
-            user.id
+            currentUser.userNameHashed,
+            currentUser.userPasswordEncrypted,
+            currentUserDecryptedPasword,
+            userId,
+            userNameHashed,
+            userOldPassword,
+            userPasswordEncrypted,
+            isSameNameUser
         )
     }
 
+/*     static mapToActivityWindow(activities: ActivityOrmEntity[]): ActivityWindowEntity {
+		const activityWindowEntity = new ActivityWindowEntity();
+		activities.forEach((activity) => {
+			const activityEntity = new ActivityEntity(
+				activity.ownerAccountId,
+				activity.sourceAccountId,
+				activity.targetAccountId,
+				new Date(activity.timestamp),
+				MoneyEntity.of(activity.amount),
+				activity.id
+			)
+			activityWindowEntity.addActivity(activityEntity);
+		})
+		return activityWindowEntity;
+	}
+ */
 
     static mapToUserOrmEntity(user: UserEntity): UserOrmEntity {
         const userOrmEntity = new UserOrmEntity();

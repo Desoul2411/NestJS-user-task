@@ -84,7 +84,9 @@ export class UsersController {
       createUserDataDto
     )
 
-    return this._userService.updateUser(updateUserCommand);
+    const result = await this._userService.updateUser(updateUserCommand);
+
+    return {result}
   }
 }
 

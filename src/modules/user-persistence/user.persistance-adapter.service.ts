@@ -7,8 +7,9 @@ import { encrypt, decrypt, hashToSha256 } from "../utils/functions-helpers/ciphe
 import { CreateUserDataDto } from "../user-web/dto/create-user-data.dto";
 import { UserMapper } from './user.mapper';
 import { CreateUserPort } from "src/domains/ports/out/create-user.port";
-import { UpdateUserPort } from "src/domains/ports/out/update-user-port";
+import { UpdateUserStatePort } from "src/domains/ports/out/update-user-port"; 
 import { factorial, fib } from "../utils/functions-helpers/math.utils";
+import { LoadUserPort } from "src/domains/ports/out/load-user.port";
 
 require('dotenv').config();
 const crypto = require('crypto');
@@ -18,13 +19,13 @@ const HASH_SECRET = process.env.HASH_SECRET;
 
 
 @Injectable()
-export class UserPersistenceAdapterService implements CreateUserPort, UpdateUserPort {   // must implement port from ports/out/..
+export class UserPersistenceAdapterService implements LoadUserPort {   // must implement port from ports/out/..
 	constructor(
 		@InjectRepository(UserOrmEntity)
 		private _userRepository: Repository<UserOrmEntity>,
 	) {}
 
-    selectUserGroup = (
+/*     selectUserGroup = (
         isSameNameUser: string | undefined,
         currentUserId: number
       ): number => {
@@ -39,11 +40,11 @@ export class UserPersistenceAdapterService implements CreateUserPort, UpdateUser
         }
     
         return group;
-    };
+    }; */
 
 
 
-    async createUser(createUserDataDto: CreateUserDataDto): Promise<UserEntity> {
+    async createUser(createUserDataDto: CreateUserDataDto): Promise<UserOrmEntity> {
         const { userName, userNewPassword } = createUserDataDto;
 
         //hash username
@@ -58,17 +59,17 @@ export class UserPersistenceAdapterService implements CreateUserPort, UpdateUser
             user.userPasswordEncrypted = userPasswordEncrypted;
             user.group = null;
 
-            await this._userRepository.save(user);
+            return this._userRepository.save(user);
 
             //map user to domain
-            return UserMapper.mapToDomain(user);
+            //return UserMapper.mapToDomain(user);
         } catch (error) {
             throw new HttpException('INTERNAL_SERVER_ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
 
-    async updateUser(userId: UserId, createUserDataDto: CreateUserDataDto): Promise<UserEntity> {
+    async loadUser(userId: UserId, createUserDataDto: CreateUserDataDto): Promise<UserEntity> {
         const { userName, userOldPassword, userNewPassword } = createUserDataDto;
     
         const currentUser = await this._userRepository.findOne(userId);
@@ -77,12 +78,14 @@ export class UserPersistenceAdapterService implements CreateUserPort, UpdateUser
           throw new HttpException('No such user', HttpStatus.NOT_FOUND);
         }
     
-        const decryptedPasword = decrypt(currentUser.userPasswordEncrypted,ENC_KEY);
+        const currentUserDecryptedPasword = decrypt(currentUser.userPasswordEncrypted,ENC_KEY);
     
-        if (userOldPassword !== decryptedPasword) {
+/*         if (userOldPassword !== currentUserDecryptedPasword) {
           console.log("PASSWORDS DIDN'T MATCH");
           throw new HttpException('Invalid old password!', HttpStatus.FORBIDDEN);
-        }
+        } */
+
+        
     
         const userNameHashed = hashToSha256(userName, HASH_SECRET);
     
@@ -95,18 +98,28 @@ export class UserPersistenceAdapterService implements CreateUserPort, UpdateUser
         } catch (error) {
           throw new HttpException('INTERNAL_SERVER_ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+        return UserMapper.mapToDomain(currentUser, currentUserDecryptedPasword, userId,userNameHashed, userOldPassword, userPasswordEncrypted, isSameNameUser);
     
-        const group = this.selectUserGroup(isSameNameUser, userId);
+        /* const group = this.selectUserGroup(isSameNameUser, userId);
     
         currentUser.userNameHashed = userNameHashed;
         currentUser.userPasswordEncrypted = userPasswordEncrypted;
-        currentUser.group = group;
+        currentUser.group = group; */
     
-        try {
+      /*   try {
           await this._userRepository.save(currentUser);
           return UserMapper.mapToDomain(currentUser);
         } catch (error) {
             throw new HttpException('INTERNAL_SERVER_ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        } */
+    }
+
+    async updateUserState(user: UserEntity) {
+       try {
+        await this._userRepository.save(UserMapper.mapToUserOrmEntity(user));
+      } catch (error) {
+          throw new HttpException('INTERNAL_SERVER_ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
     }
 }
