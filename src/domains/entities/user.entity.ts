@@ -17,7 +17,6 @@ export type Group = number;
 
 
 export class UserEntity {
-
 	constructor(
         private readonly _currentUserNameHashed: UserNameHashed,
         private readonly _currentUserPasswordEncrypted: UserPasswordEncrypted,
@@ -28,7 +27,7 @@ export class UserEntity {
         private readonly _userOldPassword: UserOldPassword,
         private readonly _userNewPasswordEncrypted: UserPasswordEncrypted,
         private readonly _isSameNameUser: isSameNameUser,
-        private  group?: Group,
+        private _group?: Group,
         
 	) {}
 
@@ -62,14 +61,17 @@ export class UserEntity {
     }
 
     get userId(): UserId {
-        return this._userId
-    }
+		return this._userId !== undefined ? this._userId : null;
+	}
     
-    
-/*     get group(): Group {
+    get group(): Group {
         return this._group;
     }   
- */
+
+    set group(value: Group) {
+        this._group = value;
+    }
+ 
 
     public comparePasswords(userOldPassword: string, currentUserPasswordDecrypted: string): boolean {
         if (userOldPassword === currentUserPasswordDecrypted) {
@@ -90,42 +92,4 @@ export class UserEntity {
     
         this.group = group;
     }
-
-
-     /* get signature(): Signature {
-        return this._signature;
-    } */
-
-
-/*     get userId() {
-        return this._id
-    }
-
-    get userName() {
-        return this._userName;
-    }
-
-    get userPassword() {
-        return this._userOldPassword;
-    }
-
-    get userGroup() {
-        return this._userGroup;
-    }
-
-    public createUser() {
-
-    }
-
-    public updateUser() {
-
-    } */
-
-
-  /*   public selectUserGroup(): number {
-        
-    } */
-
-
-
 }

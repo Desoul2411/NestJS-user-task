@@ -42,8 +42,8 @@ export class UserMapper {
 
     static mapToUserOrmEntity(user: UserEntity): UserOrmEntity {
         const userOrmEntity = new UserOrmEntity();
-        userOrmEntity.userNameHashed = user.userNameHashed;
-        userOrmEntity.userPasswordEncrypted = user.userPasswordEncrypted;
+        userOrmEntity.userNameHashed = user.userNewNameHashed;
+        userOrmEntity.userPasswordEncrypted = user.userNewPasswordEncrypted;
         userOrmEntity.group = user.group;
 
         return userOrmEntity;

@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
+
 import { UserEntity } from '../entities/user.entity';
 import { UpdateUserCommand } from '../ports/in/update-user.command';
 import { UpdateUserUseCase } from '../ports/in/update-user.use-case';
@@ -15,7 +16,7 @@ export class UpdateUserService implements UpdateUserUseCase{
 	async updateUser(command: UpdateUserCommand){
 		const user: UserEntity = await this._loadUserPort.loadUser(command.id, command.userData)   //.updateUser(command.id, command.userData)
 
-		if(!user.comparePasswords( user.userOldPassword, user.currentUserPasswordDecrypted)) {
+		if(!user.comparePasswords(user.userOldPassword, user.currentUserPasswordDecrypted)) {
 			console.log("PASSWORDS DIDN'T MATCH");
 			throw new HttpException('Invalid old password!', HttpStatus.FORBIDDEN);
 			//return false;
