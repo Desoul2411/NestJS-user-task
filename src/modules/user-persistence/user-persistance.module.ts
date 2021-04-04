@@ -28,6 +28,7 @@ import { UserPersistenceAdapterService } from './user.persistance-adapter.servic
 				return new UpdateUserService(userPersistenceAdapterService);  // add one more if needed
 			},
 			inject: [UserPersistenceAdapterService]
+			TEST
 		} */
 	],
 	exports: [
