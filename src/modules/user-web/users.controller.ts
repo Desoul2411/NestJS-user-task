@@ -14,22 +14,25 @@ import { SignatureGuard } from './guards/signature.guard';
 import { ValidationPipe } from './validation.pipe';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ErrorResponse403, ErrorResponse404, ErrorResponse400 } from './error.type';
-import { CreateUserUseCase, CreateUserUseCaseSymbol } from 'src/domains/ports/in/create-user.use-case';
-import { CreateUserCommand } from 'src/domains/ports/in/create-user.command';
+/* import { CreateUserUseCase, CreateUserUseCaseSymbol } from 'src/domains/ports/in/create-user.use-case'; */
+/* import { CreateUserCommand } from 'src/domains/ports/in/create-user.command'; */
 import { UserOrmEntity } from '../user-persistence/user.orm.entity';
 import { UpdateUserUseCase, UpdateUserUseCaseSymbol } from 'src/domains/ports/in/update-user.use-case';
 import { UpdateUserCommand } from 'src/domains/ports/in/update-user.command';
+import { UserPersistenceAdapterService } from '../user-persistence/user.persistance-adapter.service';
 
 
 
 @Controller('user')
 export class UsersController {
   constructor(
-    @Inject(CreateUserUseCaseSymbol) private readonly _createUserService: CreateUserUseCase,
+/*     @Inject(CreateUserUseCaseSymbol) private readonly _createUserService: CreateUserUseCase, */
+    private readonly userDataService: UserPersistenceAdapterService,
     @Inject(UpdateUserUseCaseSymbol) private readonly _userService: UpdateUserUseCase,
   ) {}
 
 
+  @Post()
   @ApiResponse({
     status: 200,
     description: 'User updated',
@@ -46,14 +49,10 @@ export class UsersController {
     type: ErrorResponse400,
   })
   @ApiBody({ type: CreateUserDataDto }) // for Swagger
-  @Post()
-  async createUser(@Body(new ValidationPipe()) createUserDataDto: CreateUserDataDto,): Promise<UserOrmEntity> {
-
-    const createUserCommand = new CreateUserCommand(
-      createUserDataDto
-    )
-
-    return this._createUserService.createUser(createUserCommand);
+  create(
+    @Body(new ValidationPipe()) createProductDto: CreateUserDataDto,
+  ): Promise<UserOrmEntity> {
+    return this.userDataService.createUser(createProductDto);
   }
 
 
@@ -84,9 +83,8 @@ export class UsersController {
       createUserDataDto
     )
 
-    const result = await this._userService.updateUser(updateUserCommand);
+    return await this._userService.updateUser(updateUserCommand);
 
-    return {result}
   }
 }
 

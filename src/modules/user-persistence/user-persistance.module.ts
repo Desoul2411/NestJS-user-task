@@ -1,10 +1,10 @@
 
 import {Global, Module} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
-import { CreateUserUseCaseSymbol } from 'src/domains/ports/in/create-user.use-case';
+/* import { CreateUserUseCaseSymbol } from 'src/domains/ports/in/create-user.use-case'; */
 import { UpdateUserUseCaseSymbol } from 'src/domains/ports/in/update-user.use-case';
-import { CreateUserService } from 'src/domains/services/create-user.service';
-/* import { UpdateUserService } from 'src/domains/services/update-user.service'; */
+/* import { CreateUserService } from 'src/domains/services/create-user.service'; */
+import { UpdateUserService } from 'src/domains/services/update-user.service';
 import { UserOrmEntity } from './user.orm.entity';
 import { UserPersistenceAdapterService } from './user.persistance-adapter.service';
 
@@ -16,9 +16,9 @@ import { UserPersistenceAdapterService } from './user.persistance-adapter.servic
 	providers: [
 		UserPersistenceAdapterService,
 		{
-			provide: CreateUserUseCaseSymbol,
+			provide: UpdateUserUseCaseSymbol,
 			useFactory: (userPersistenceAdapterService: UserPersistenceAdapterService) => {
-				return new CreateUserService(userPersistenceAdapterService,userPersistenceAdapterService);  // add one more if needed
+				return new UpdateUserService(userPersistenceAdapterService,userPersistenceAdapterService);  // add one more if needed
 			},
 			inject: [UserPersistenceAdapterService]
 		},
@@ -31,7 +31,7 @@ import { UserPersistenceAdapterService } from './user.persistance-adapter.servic
 		} */
 	],
 	exports: [
-		CreateUserUseCaseSymbol,
+	/* 	CreateUserUseCaseSymbol, */
 		UpdateUserUseCaseSymbol
 	]
 })

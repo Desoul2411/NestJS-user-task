@@ -1,11 +1,10 @@
-import { encrypt, decrypt, hashToSha256 } from "../../modules/utils/functions-helpers/cipher.utils";
+/* import { encrypt, decrypt, hashToSha256 } from "../../modules/utils/functions-helpers/cipher.utils"; */
 import { factorial, fib } from "../../modules/utils/functions-helpers/math.utils";
 
 export type UserName = string;
 export type UserOldPassword = string;
 export type UserNewPassword = string;
 export type Signature = string; 
- 
 
 export type UserId = number | null;
 export type UserNameHashed = string;
@@ -28,7 +27,6 @@ export class UserEntity {
         private readonly _userNewPasswordEncrypted: UserPasswordEncrypted,
         private readonly _isSameNameUser: isSameNameUser,
         private _group?: Group,
-        
 	) {}
 
 
@@ -61,7 +59,7 @@ export class UserEntity {
     }
 
     get userId(): UserId {
-		return this._userId !== undefined ? this._userId : null;
+		return this._userId;
 	}
     
     get group(): Group {
@@ -79,7 +77,7 @@ export class UserEntity {
         }
 	}
 
-    public selectUserGroup(isSameNameUser: isSameNameUser , userId: UserId): void {
+    public selectUserGroup(isSameNameUser: isSameNameUser , userId: UserId): boolean {
         const checkNumber = Math.abs(factorial(userId) - fib(userId));
         console.log('checkNumber', checkNumber);
         let group;
@@ -91,5 +89,7 @@ export class UserEntity {
         }
     
         this.group = group;
+
+        return true;
     }
 }

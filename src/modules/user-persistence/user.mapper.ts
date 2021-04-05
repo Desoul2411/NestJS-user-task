@@ -23,25 +23,9 @@ export class UserMapper {
         )
     }
 
-/*     static mapToActivityWindow(activities: ActivityOrmEntity[]): ActivityWindowEntity {
-		const activityWindowEntity = new ActivityWindowEntity();
-		activities.forEach((activity) => {
-			const activityEntity = new ActivityEntity(
-				activity.ownerAccountId,
-				activity.sourceAccountId,
-				activity.targetAccountId,
-				new Date(activity.timestamp),
-				MoneyEntity.of(activity.amount),
-				activity.id
-			)
-			activityWindowEntity.addActivity(activityEntity);
-		})
-		return activityWindowEntity;
-	}
- */
-
     static mapToUserOrmEntity(user: UserEntity): UserOrmEntity {
         const userOrmEntity = new UserOrmEntity();
+        userOrmEntity.id = +user.userId;
         userOrmEntity.userNameHashed = user.userNewNameHashed;
         userOrmEntity.userPasswordEncrypted = user.userNewPasswordEncrypted;
         userOrmEntity.group = user.group;
