@@ -34,16 +34,17 @@ export class UserPersistenceAdapterService implements LoadUserPort {   // must i
         const userPasswordEncrypted = encrypt(userNewPassword, ENC_KEY);
 
         try {
-            const user = new UserOrmEntity();
-            user.userNameHashed = userNameHashed;
-            user.userPasswordEncrypted = userPasswordEncrypted;
-            user.group = null;
-
-            return this._userRepository.save(user);
+            return this._userRepository.save({userNameHashed, userPasswordEncrypted, group: null});
         } catch (error) {
             throw new HttpException('INTERNAL_SERVER_ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+
+    /* async loadUserById(userId: UserId): Promise<UserEntity> {
+
+    } */
 
 
     async loadUser(userId: UserId, createUserDataDto: CreateUserDataDto): Promise<UserEntity> {
@@ -63,11 +64,7 @@ export class UserPersistenceAdapterService implements LoadUserPort {   // must i
 
         let isSameNameUser;
     
-        try {
-          isSameNameUser = await this._userRepository.findOne({ userNameHashed });
-        } catch (error) {
-          throw new HttpException('INTERNAL_SERVER_ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        isSameNameUser = await this._userRepository.findOne({ userNameHashed });
 
         return UserMapper.mapToDomain(currentUser, currentUserDecryptedPasword, userId,userNameHashed, userOldPassword, userPasswordEncrypted, isSameNameUser);
     }

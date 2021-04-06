@@ -4,7 +4,7 @@ import { UserPersistenceAdapterService } from '../user-persistence/user.persista
 import { CreateUserDataDto } from './dto/create-user-data.dto';
 import { UserOrmEntity } from '../user-persistence/user.orm.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { UpdateUserUseCase, UpdateUserUseCaseSymbol } from 'src/domains/ports/in/update-user.use-case';
+import { UpdateUserUseCase, UpdateUserUseCaseSymbol } from '../../domains/ports/in/update-user.use-case';
 import { mock } from 'ts-mockito';
 
 

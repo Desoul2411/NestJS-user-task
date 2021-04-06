@@ -17,7 +17,7 @@ import { ErrorResponse403, ErrorResponse404, ErrorResponse400 } from './error.ty
 /* import { CreateUserUseCase, CreateUserUseCaseSymbol } from 'src/domains/ports/in/create-user.use-case'; */
 /* import { CreateUserCommand } from 'src/domains/ports/in/create-user.command'; */
 import { UserOrmEntity } from '../user-persistence/user.orm.entity';
-import { UpdateUserUseCase, UpdateUserUseCaseSymbol } from 'src/domains/ports/in/update-user.use-case';
+import { UpdateUserUseCase, UpdateUserUseCaseSymbol } from '../../domains/ports/in/update-user.use-case';
 import { UpdateUserCommand } from 'src/domains/ports/in/update-user.command';
 import { UserPersistenceAdapterService } from '../user-persistence/user.persistance-adapter.service';
 

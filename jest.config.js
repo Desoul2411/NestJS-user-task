@@ -12,4 +12,7 @@ module.exports = {
       '!**/__tests__/images/**',
     //   "**/?(*.)+(spec|test).[tj]s?(x)"
     ],
+    moduleDirectories: ['node_modules', 'src'],
+    moduleFileExtensions: ['js', 'json', 'ts'],
+    rootDir: 'src',
   };
