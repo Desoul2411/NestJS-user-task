@@ -18,7 +18,7 @@ import { ErrorResponse403, ErrorResponse404, ErrorResponse400 } from './error.ty
 /* import { CreateUserCommand } from 'src/domains/ports/in/create-user.command'; */
 import { UserOrmEntity } from '../user-persistence/user.orm.entity';
 import { UpdateUserUseCase, UpdateUserUseCaseSymbol } from '../../domains/ports/in/update-user.use-case';
-import { UpdateUserCommand } from 'src/domains/ports/in/update-user.command';
+import { UpdateUserCommand } from '../../domains/ports/in/update-user.command';
 import { UserPersistenceAdapterService } from '../user-persistence/user.persistance-adapter.service';
 
 
@@ -26,9 +26,8 @@ import { UserPersistenceAdapterService } from '../user-persistence/user.persista
 @Controller('user')
 export class UsersController {
   constructor(
-/*     @Inject(CreateUserUseCaseSymbol) private readonly _createUserService: CreateUserUseCase, */
     private readonly userDataService: UserPersistenceAdapterService,
-    @Inject(UpdateUserUseCaseSymbol) private readonly _userService: UpdateUserUseCase,
+    @Inject(UpdateUserUseCaseSymbol) private readonly _userUpdateService: UpdateUserUseCase,
   ) {}
 
 
@@ -83,7 +82,7 @@ export class UsersController {
       createUserDataDto
     )
 
-    return await this._userService.updateUser(updateUserCommand);
+    return await this._userUpdateService.updateUser(updateUserCommand);
 
   }
 }

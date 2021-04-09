@@ -25,7 +25,6 @@ export class UserEntity {
         private readonly _userNewNameHashed: UserNameHashed,
         private readonly _userOldPassword: UserOldPassword,
         private readonly _userNewPasswordEncrypted: UserPasswordEncrypted,
-        private readonly _isSameNameUser: isSameNameUser,
         private _group?: Group,
 	) {}
 
@@ -54,10 +53,6 @@ export class UserEntity {
         return this._userNewPasswordEncrypted;
     }
 
-    get isSameNameUser(): isSameNameUser {
-        return this._isSameNameUser;
-    }
-
     get userId(): UserId {
 		return this._userId;
 	}
@@ -77,7 +72,7 @@ export class UserEntity {
         }
 	}
 
-    public selectUserGroup(isSameNameUser: isSameNameUser , userId: UserId): boolean {
+    public selectUserGroup(sameUserName: UserName | undefined, userId: UserId): boolean {
         const checkNumber = Math.abs(factorial(userId) - fib(userId));
         console.log('checkNumber', checkNumber);
         let group;
@@ -85,11 +80,11 @@ export class UserEntity {
         if (checkNumber % 2 === 0) {
           group = 1;
         } else {
-          group = isSameNameUser ? 2 : 3;
+          group = sameUserName ? 2 : 3;
         }
     
         this.group = group;
 
-        return true;
+        return group;
     }
 }

@@ -10,7 +10,7 @@ import { mock } from 'ts-mockito';
 
 describe('UsersController', () => {
   let usersController: UsersController;
-  let usersDataService: UserPersistenceAdapterService;
+  let userPersistenceAdapterService: UserPersistenceAdapterService;
   let createUserDataDto : CreateUserDataDto
   
   let userDomainService : UpdateUserUseCase;
@@ -21,16 +21,21 @@ describe('UsersController', () => {
     const moduleRef = await Test.createTestingModule({
         controllers: [UsersController],
         providers: [
-         // userDomainService,
           UserPersistenceAdapterService,
         {
           provide: getRepositoryToken(UserOrmEntity),
           useValue: mockValue,
-        }],
+        },
+
+      /*   userDomainService, {
+          provide: getRepositoryToken(UpdateUserUseCaseSymbol),
+          useValue: mockValue
+        } */
+      ],
       }).compile();
 
-    usersDataService = moduleRef.get<UserPersistenceAdapterService>(UserPersistenceAdapterService);
-    //userDomainService = moduleRef.get<UpdateUserUseCase>(UpdateUserUseCaseSymbol);
+    userPersistenceAdapterService = moduleRef.get<UserPersistenceAdapterService>(UserPersistenceAdapterService, );
+    userDomainService = moduleRef.get<UpdateUserUseCase>(UpdateUserUseCaseSymbol);
     usersController = moduleRef.get<UsersController>(UsersController);
     createUserDataDto = new CreateUserDataDto;
 
@@ -46,7 +51,7 @@ describe('UsersController', () => {
       expect(typeof usersController.create).toBe('function');
     })
 
-    it('should return created user object', async () => {
+    it('should return created user object', async() => {
 
       const result = 
         {
@@ -56,7 +61,7 @@ describe('UsersController', () => {
           "group": 2
         }
       
-      jest.spyOn(usersDataService, 'createUser').mockImplementation(async () => result);
+      jest.spyOn(userPersistenceAdapterService, 'createUser').mockImplementation(async () => result);
 
       expect(await usersController.create(createUserDataDto)).toBe(result);
     });

@@ -8,7 +8,8 @@ import { CreateUserDataDto } from "../user-web/dto/create-user-data.dto";
 import { UserMapper } from './user.mapper';
 /* import { CreateUserPort } from "src/domains/ports/out/create-user.port"; */
 import { UpdateUserStatePort } from "src/domains/ports/out/update-user-port"; 
-import { LoadUserPort } from "src/domains/ports/out/load-user.port";
+import { LoadUserByIdPort } from "src/domains/ports/out/load-user-by-id.port";
+import { LoadUserByNamePort } from "src/domains/ports/out/load-user-by-name.port";
 
 require('dotenv').config();
 const crypto = require('crypto');
@@ -18,7 +19,7 @@ const HASH_SECRET = process.env.HASH_SECRET;
 
 
 @Injectable()
-export class UserPersistenceAdapterService implements LoadUserPort {   // must implement port from ports/out/..
+export class UserPersistenceAdapterService implements LoadUserByIdPort, LoadUserByNamePort  {   // must implement port from ports/out/..
 	constructor(
 		@InjectRepository(UserOrmEntity)
 		private _userRepository: Repository<UserOrmEntity>,
@@ -41,33 +42,51 @@ export class UserPersistenceAdapterService implements LoadUserPort {   // must i
     }
 
 
+    async loadUserByName(userName: string): Promise<UserEntity> {
+        const userNameHashed = hashToSha256(userName, HASH_SECRET);
+        const userByName = await this._userRepository.findOne({ userNameHashed });
 
-    /* async loadUserById(userId: UserId): Promise<UserEntity> {
+        return UserMapper.mapUserByNametoDomain(userByName);
+    } 
 
-    } */
+
+    async loadUserById(userId: UserId, createUserDataDto: CreateUserDataDto): Promise<UserEntity> {  // old user from db
+      const { userName, userOldPassword, userNewPassword } = createUserDataDto;
+      const currentUser = await this._userRepository.findOne(userId);
+
+      if (!currentUser) {
+        throw new HttpException('NO_SUCH_USER', HttpStatus.NOT_FOUND);
+      }
+
+      const currentUserDecryptedPasword = decrypt(currentUser.userPasswordEncrypted,ENC_KEY);
+      const userNewPasswordEncrypted = encrypt(userNewPassword, ENC_KEY);
+      const userNewNameHashed = hashToSha256(userName, HASH_SECRET);
+
+      return UserMapper.mapUserByIdtoDomain(currentUser, userOldPassword, currentUserDecryptedPasword, userNewPasswordEncrypted, userNewNameHashed);
+    }
 
 
-    async loadUser(userId: UserId, createUserDataDto: CreateUserDataDto): Promise<UserEntity> {
-        const { userName, userOldPassword, userNewPassword } = createUserDataDto;
+   // async loadUser(userId: UserId, createUserDataDto: CreateUserDataDto): Promise<UserEntity> {
+      //  const { userName, userOldPassword, userNewPassword } = createUserDataDto;
     
-        const currentUser = await this._userRepository.findOne(userId);
+        /* const currentUser = await this._userRepository.findOne(userId);
     
         if (!currentUser) {
           throw new HttpException('No such user', HttpStatus.NOT_FOUND);
         }
+     */
+       // const currentUserDecryptedPasword = decrypt(currentUser.userPasswordEncrypted,ENC_KEY);
     
-        const currentUserDecryptedPasword = decrypt(currentUser.userPasswordEncrypted,ENC_KEY);
+       // const userNameHashed = hashToSha256(userName, HASH_SECRET);
     
-        const userNameHashed = hashToSha256(userName, HASH_SECRET);
-    
-        const userPasswordEncrypted = encrypt(userNewPassword, ENC_KEY);
+       // const userPasswordEncrypted = encrypt(userNewPassword, ENC_KEY);
 
-        let isSameNameUser;
+        //let isSameNameUser;
     
-        isSameNameUser = await this._userRepository.findOne({ userNameHashed });
+     //   isSameNameUser = await this._userRepository.findOne({ userNameHashed });
 
-        return UserMapper.mapToDomain(currentUser, currentUserDecryptedPasword, userId,userNameHashed, userOldPassword, userPasswordEncrypted, isSameNameUser);
-    }
+       // return UserMapper.mapToDomain(currentUser, currentUserDecryptedPasword, userId,userNameHashed, userOldPassword, userPasswordEncrypted, isSameNameUser);
+    //}
     
 
     async updateUserState(user: UserEntity) {

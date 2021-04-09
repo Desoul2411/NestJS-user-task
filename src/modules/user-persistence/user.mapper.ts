@@ -1,27 +1,40 @@
-import { UserEntity } from 'src/domains/entities/user.entity';
+import { UserEntity } from '../../domains/entities/user.entity';
 import { UserOrmEntity } from './user.orm.entity';
 
 export class UserMapper {
-    static mapToDomain(
-        currentUser: UserOrmEntity,
-        currentUserDecryptedPasword: string,
-        userId: number,
-        userNameHashed: string,
-        userOldPassword: string,
-        userPasswordEncrypted: string,
-        isSameNameUser: string
+    static mapUserByNametoDomain (
+        foundByNameUser: UserOrmEntity,
     ): UserEntity {
         return new UserEntity(  
-            currentUser.userNameHashed,
-            currentUser.userPasswordEncrypted,
-            currentUserDecryptedPasword,
-            userId,
-            userNameHashed,
-            userOldPassword,
-            userPasswordEncrypted,
-            isSameNameUser
+            null,
+            null,
+            null,
+            null,
+            foundByNameUser && foundByNameUser.userNameHashed,
+            null,
+            null,
         )
     }
+
+
+    static mapUserByIdtoDomain (
+        foundByIdUser: UserOrmEntity,
+        userOldPassword: string,
+        foundByIdUserDecryptedPasword: string,
+        userNewPasswordEncrypted: string,
+        userNewNameHashed: string
+    ): UserEntity {
+        return new UserEntity(  
+            foundByIdUser.userNameHashed,
+            foundByIdUser.userPasswordEncrypted,
+            foundByIdUserDecryptedPasword,
+            foundByIdUser.id,
+            userNewNameHashed,
+            userOldPassword,
+            userNewPasswordEncrypted,
+        )
+    }
+
 
     static mapToUserOrmEntity(user: UserEntity): UserOrmEntity {
         const userOrmEntity = new UserOrmEntity();

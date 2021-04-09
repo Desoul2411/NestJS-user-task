@@ -1,3 +1,105 @@
+import { Test , TestingModule} from '@nestjs/testing';
+import { UsersController } from '../user-web/users.controller';
+import { UserPersistenceAdapterService } from './user.persistance-adapter.service';
+import { CreateUserDataDto } from '../user-web/dto/create-user-data.dto';
+import { UserOrmEntity } from './user.orm.entity';;
+import { getRepositoryToken } from '@nestjs/typeorm';
+
+
+
+
+
+
+describe('UserPersistenceAdapterService', () => {
+  let usersController: UsersController;
+  let usersDataService: UserPersistenceAdapterService;
+  let createUserDataDto : CreateUserDataDto;
+
+  const mockValue = {};
+
+
+/*   const invalidTypesDTO = {   // how to test invalid dto?
+    "userName": 22,
+    "userOldPassword":"veryStrongPassword",
+    "userNewPassword":"veryStrongPassword",
+    "signature": "82ef280c14ce9baa5e39a4b87bff7978"
+  }
+ */
+
+  beforeEach(async () => {
+    const moduleRef = await Test.createTestingModule({
+        controllers: [UsersController],
+        providers: [
+          UserPersistenceAdapterService
+        ,{
+          provide: getRepositoryToken(UserOrmEntity),
+          useValue: mockValue,
+        }],
+      }).compile();
+
+    usersDataService = moduleRef.get<UserPersistenceAdapterService>(UserPersistenceAdapterService);
+    usersController = moduleRef.get<UsersController>(UsersController);
+    createUserDataDto = new CreateUserDataDto;
+  });
+
+  describe('createUser', () => {
+    it('should return created user', async () => {
+      const result = {
+            "id": 255,
+            "userNameHashed": "9c2d29850e7fd884c19b3ef48a01b82c0a88854082ad150056ac770dcbeee05c",
+            "userPasswordEncrypted": "m5biIADc/0jKc2oq8YXJOmRs9Dmw+71KPy+ghSDdoFY=",
+            "group": 2
+        };
+
+      jest.spyOn(usersDataService, 'createUser').mockImplementation(async () => result);
+
+      expect(await usersDataService.createUser(createUserDataDto)).toEqual(result);
+
+    });
+
+  });
+
+  describe('createUser - fail', () => {
+
+
+  });
+
+  describe('loadUserByName - success', () => {
+
+
+  });
+
+  describe('loadUserByName - fail', () => {
+
+
+  });
+
+  describe('loadUserById - success', () => {
+
+
+  });
+
+  describe('loadUserById - fail', () => {
+
+  });
+
+  describe('updateUserState - success', () => {
+
+  });
+
+  describe('updateUserState - fail', () => {
+
+  });
+
+
+});
+
+
+
+
+
+
+
 /* import { Test , TestingModule} from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersDataService } from './users.service';
@@ -65,31 +167,7 @@ describe('UsersService', () => {
   });
 
 });
-
- 
-
-
-
-
-
-
-
  */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

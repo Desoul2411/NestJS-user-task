@@ -18,20 +18,12 @@ import { UserPersistenceAdapterService } from './user.persistance-adapter.servic
 		{
 			provide: UpdateUserUseCaseSymbol,
 			useFactory: (userPersistenceAdapterService: UserPersistenceAdapterService) => {
-				return new UpdateUserService(userPersistenceAdapterService,userPersistenceAdapterService);  // add one more if needed
+				return new UpdateUserService(userPersistenceAdapterService,userPersistenceAdapterService,userPersistenceAdapterService);
 			},
 			inject: [UserPersistenceAdapterService]
 		},
-	/* 	{
-			provide: UpdateUserUseCaseSymbol,
-			useFactory: (userPersistenceAdapterService: UserPersistenceAdapterService) => {
-				return new UpdateUserService(userPersistenceAdapterService);  // add one more if needed
-			},
-			inject: [UserPersistenceAdapterService]
-		} */
 	],
 	exports: [
-	/* 	CreateUserUseCaseSymbol, */
 		UpdateUserUseCaseSymbol
 	]
 })
