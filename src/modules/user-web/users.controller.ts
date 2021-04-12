@@ -73,7 +73,7 @@ export class UsersController {
   })
   @ApiBody({ type: CreateUserDataDto })
   //@UseGuards(SignatureGuard)
-  async updateUser(
+  async update(
     @Param('id') id: number,
     @Body(new ValidationPipe()) createUserDataDto: CreateUserDataDto,
   ): Promise<UserOrmEntity> {

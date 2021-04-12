@@ -4,18 +4,37 @@ import { UserPersistenceAdapterService } from './user.persistance-adapter.servic
 import { CreateUserDataDto } from '../user-web/dto/create-user-data.dto';
 import { UserOrmEntity } from './user.orm.entity';;
 import { getRepositoryToken } from '@nestjs/typeorm';
-
-
-
+import { UpdateUserUseCaseSymbol } from '../../domains/ports/in/update-user.use-case';
+import * as cipherUtils from '../utils/functions-helpers/cipher.utils';
 
 
 
 describe('UserPersistenceAdapterService', () => {
   let usersController: UsersController;
   let usersDataService: UserPersistenceAdapterService;
-  let createUserDataDto : CreateUserDataDto;
+  //let createUserDataDto : CreateUserDataDto;
 
   const mockValue = {};
+
+  jest.mock('../utils/functions-helpers/cipher.utils', () => ({
+    encrypt: jest.fn(),
+    decrypt: jest.fn(),
+    hashToSha256: jest.fn(),
+  }));
+
+  const createUserDataDto = {
+    "userName":"gdfgjuuyg978989sdhdsfdasdasdasdsudf",
+    "userOldPassword":"veryStrongPassword",
+    "userNewPassword":"veryStrongPassword",
+    "signature": "ac46abebcd7c8255f61f82afe7e57aec"
+  }
+
+
+  const createUserMock = jest.fn();
+  const loadUserByNameMock  = jest.fn();
+  const loadUserByIdMock  = jest.fn();
+  const updateUserStateMock  = jest.fn();
+
 
 
 /*   const invalidTypesDTO = {   // how to test invalid dto?
@@ -26,23 +45,55 @@ describe('UserPersistenceAdapterService', () => {
   }
  */
 
+
+  const userRepositoryFactory = () => ({
+    save: jest.fn()
+  });
+
+
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-        controllers: [UsersController],
         providers: [
-          UserPersistenceAdapterService
-        ,{
-          provide: getRepositoryToken(UserOrmEntity),
-          useValue: mockValue,
-        }],
+          UserPersistenceAdapterService,
+          { useFactory: userRepositoryFactory, provide:  getRepositoryToken(UserOrmEntity) },
+        {
+          provide: UpdateUserUseCaseSymbol,
+          useValue: mockValue
+        },
+        {
+          provide: UserPersistenceAdapterService,
+          useValue: {
+            createUser: createUserMock,
+            loadUserById: loadUserByIdMock,
+            loadUserByName: loadUserByNameMock,
+            updateUserState: updateUserStateMock,
+          }
+        }
+      ],
       }).compile();
 
     usersDataService = moduleRef.get<UserPersistenceAdapterService>(UserPersistenceAdapterService);
-    usersController = moduleRef.get<UsersController>(UsersController);
-    createUserDataDto = new CreateUserDataDto;
+    //usersController = moduleRef.get<UsersController>(UsersController);
   });
 
+
   describe('createUser', () => {
+    it('should be called with passed data once', async () => {
+     // await usersController.create(createUserDataDto);
+
+     (cipherUtils.hashToSha256 as jest.Mock).mockImplementation(() => 'b8ea7132aeb096a3cdc8cd453075f8bd53ead6120baf545299e4949aeb9ff5ba');
+     (cipherUtils.encrypt as jest.Mock).mockImplementation(() => 'aUhWM2dRMC9XY2E1R1ZianJ3WTBNZVpNaHNMWmM4L3RzTWdkYWw1NjBJVT0tLW5kb2hrbERTcHRQOUlnZWs1dVdRMWc9PQ');
+
+
+      expect(createUserMock).toHaveBeenCalledTimes(1);
+      expect( userRepositoryFactory().save).toHaveBeenCalledWith(createUserDataDto);
+    });
+
+
+
+
+    
+
     it('should return created user', async () => {
       const result = {
             "id": 255,

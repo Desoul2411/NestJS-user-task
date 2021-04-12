@@ -64,29 +64,6 @@ export class UserPersistenceAdapterService implements LoadUserByIdPort, LoadUser
 
       return UserMapper.mapUserByIdtoDomain(currentUser, userOldPassword, currentUserDecryptedPasword, userNewPasswordEncrypted, userNewNameHashed);
     }
-
-
-   // async loadUser(userId: UserId, createUserDataDto: CreateUserDataDto): Promise<UserEntity> {
-      //  const { userName, userOldPassword, userNewPassword } = createUserDataDto;
-    
-        /* const currentUser = await this._userRepository.findOne(userId);
-    
-        if (!currentUser) {
-          throw new HttpException('No such user', HttpStatus.NOT_FOUND);
-        }
-     */
-       // const currentUserDecryptedPasword = decrypt(currentUser.userPasswordEncrypted,ENC_KEY);
-    
-       // const userNameHashed = hashToSha256(userName, HASH_SECRET);
-    
-       // const userPasswordEncrypted = encrypt(userNewPassword, ENC_KEY);
-
-        //let isSameNameUser;
-    
-     //   isSameNameUser = await this._userRepository.findOne({ userNameHashed });
-
-       // return UserMapper.mapToDomain(currentUser, currentUserDecryptedPasword, userId,userNameHashed, userOldPassword, userPasswordEncrypted, isSameNameUser);
-    //}
     
 
     async updateUserState(user: UserEntity) {

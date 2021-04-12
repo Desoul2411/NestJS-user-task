@@ -6,88 +6,91 @@ import { UserOrmEntity } from '../user-persistence/user.orm.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UpdateUserUseCase, UpdateUserUseCaseSymbol } from '../../domains/ports/in/update-user.use-case';
 import { mock } from 'ts-mockito';
+import { UpdateUserCommand } from '../../domains/ports/in/update-user.command';
 
 
 describe('UsersController', () => {
   let usersController: UsersController;
   let userPersistenceAdapterService: UserPersistenceAdapterService;
-  let createUserDataDto : CreateUserDataDto
-  
   let userDomainService : UpdateUserUseCase;
 
   const mockValue = {};
 
+  const createUserDataDto = {
+    "userName":"gdfgjuuyg978989sdhdsfdasdasdasdsudf",
+    "userOldPassword":"veryStrongPassword",
+    "userNewPassword":"veryStrongPassword",
+    "signature": "ac46abebcd7c8255f61f82afe7e57aec"
+  }
+
+  const expectedResult = {
+    "id": 14,
+    "userNameHashed": "b8ea7132aeb096a3cdc8cd453075f8bd53ead6120baf545299e4949aeb9ff5ba",
+    "userPasswordEncrypted": "aUhWM2dRMC9XY2E1R1ZianJ3WTBNZVpNaHNMWmM4L3RzTWdkYWw1NjBJVT0tLW5kb2hrbERTcHRQOUlnZWs1dVdRMWc9PQ==",
+    "group": 2
+  }
+
+
+  const createUserMock = jest.fn(createUserDataDto => expectedResult);
+  const updateUserMock = jest.fn();
+
+
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-        controllers: [UsersController],
         providers: [
+          UsersController,
           UserPersistenceAdapterService,
         {
           provide: getRepositoryToken(UserOrmEntity),
           useValue: mockValue,
         },
-
-      /*   userDomainService, {
-          provide: getRepositoryToken(UpdateUserUseCaseSymbol),
-          useValue: mockValue
-        } */
+        {
+          provide: UpdateUserUseCaseSymbol,
+          useValue: {
+            updateUser: updateUserMock,
+          }
+        },
+        {
+          provide: UserPersistenceAdapterService,
+          useValue: {
+            createUser: createUserMock,
+            updateUser: updateUserMock,
+          }
+        }
       ],
       }).compile();
 
     userPersistenceAdapterService = moduleRef.get<UserPersistenceAdapterService>(UserPersistenceAdapterService, );
     userDomainService = moduleRef.get<UpdateUserUseCase>(UpdateUserUseCaseSymbol);
     usersController = moduleRef.get<UsersController>(UsersController);
-    createUserDataDto = new CreateUserDataDto;
-
-
-
-    //const UpdateUserUseCase = 
-    
   });
 
 
   describe('create', () => {
-    it('should be a function and exist in UsersController', () => {
-      expect(typeof usersController.create).toBe('function');
-    })
+    it('should be called with passed data once', async() => {
+      await usersController.create(createUserDataDto);
+      expect(createUserMock).toHaveBeenCalledTimes(1);
+      expect(createUserMock).toHaveBeenCalledWith(createUserDataDto);
+    });
 
     it('should return created user object', async() => {
-
-      const result = 
-        {
-          "id": 255,
-          "userNameHashed": "9c2d29850e7fd884c19b3ef48a01b82c0a88854082ad150056ac770dcbeee05c",
-          "userPasswordEncrypted": "m5biIADc/0jKc2oq8YXJOmRs9Dmw+71KPy+ghSDdoFY=",
-          "group": 2
-        }
-      
-      jest.spyOn(userPersistenceAdapterService, 'createUser').mockImplementation(async () => result);
-
-      expect(await usersController.create(createUserDataDto)).toBe(result);
+      await usersController.create(createUserDataDto);
+      expect(createUserMock).toHaveReturnedWith(expectedResult);
     });
   });
 
+
+
  
-/*   describe('update', () => {
-    it('should be a function and exist in UsersController', () => {
-      expect(typeof usersController.create).toBe('function');
-    })
+  describe('update', () => {
+      it('should return updated user object', async () => {
+        const updateUserCommand = new UpdateUserCommand(1,createUserDataDto);
 
-    it('should return updated user object', async () => {
-
-      const result = 
-        {
-          "id": 255,
-          "userNameHashed": "9c2d29850e7fd884c19b3ef48a01b82c0a88854082ad150056ac770dcbeee05c",
-          "userPasswordEncrypted": "m5biIADc/0jKc2oq8YXJOmRs9Dmw+71KPy+ghSDdoFY=",
-          "group": 2
-        }
-      
-      jest.spyOn(usersDataService, 'update').mockImplementation(async () => result);
-
-      expect(await usersController.update(createUserDataDto)).toBe(result);
-    });
-  }); */
+        await usersController.update(1,createUserDataDto);
+        expect(updateUserMock).toHaveBeenCalledTimes(1)
+        expect(updateUserMock).toHaveBeenCalledWith(updateUserCommand);
+      });
+  });
 });
 
  

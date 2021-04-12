@@ -18,9 +18,7 @@ export class UpdateUserService implements UpdateUserUseCase{
 	async updateUser(command: UpdateUserCommand){
 		const userById: UserEntity = await this._loadUserByIdPort.loadUserById(command.id, command.userData);
 		const userByName: UserEntity = await this._loadUserByNamePort.loadUserByName(command.userData.userName);
-
-
-
+		
 		console.log(userById);
 
 		if(!userById.comparePasswords(userById.userOldPassword, userById.currentUserPasswordDecrypted)) {
