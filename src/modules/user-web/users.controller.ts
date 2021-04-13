@@ -34,7 +34,7 @@ export class UsersController {
   @Post()
   @ApiResponse({
     status: 200,
-    description: 'User updated',
+    description: 'User created',
     type: UserOrmEntity, // User - array []
   })
   @ApiResponse({

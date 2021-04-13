@@ -6,6 +6,7 @@ import { UserOrmEntity } from './user.orm.entity';;
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UpdateUserUseCaseSymbol } from '../../domains/ports/in/update-user.use-case';
 import * as cipherUtils from '../utils/functions-helpers/cipher.utils';
+import { generateString } from '../utils/testing-helpers/generators.utils';
 
 
 
@@ -79,22 +80,20 @@ describe('UserPersistenceAdapterService', () => {
 
   describe('createUser', () => {
     it('should be called with passed data once', async () => {
-     // await usersController.create(createUserDataDto);
-
-     (cipherUtils.hashToSha256 as jest.Mock).mockImplementation(() => 'b8ea7132aeb096a3cdc8cd453075f8bd53ead6120baf545299e4949aeb9ff5ba');
-     (cipherUtils.encrypt as jest.Mock).mockImplementation(() => 'aUhWM2dRMC9XY2E1R1ZianJ3WTBNZVpNaHNMWmM4L3RzTWdkYWw1NjBJVT0tLW5kb2hrbERTcHRQOUlnZWs1dVdRMWc9PQ');
-
+      const passwordGenerated = generateString(64);
+     (cipherUtils.hashToSha256 as jest.Mock).mockImplementation(() => 'c46a79ca5792fbf3c68ce6bd1810200dfd8926e889fa375ce7efd9620dc5ac6f');
+     (cipherUtils.encrypt as jest.Mock).mockImplementation(() => passwordGenerated);
 
       expect(createUserMock).toHaveBeenCalledTimes(1);
       expect( userRepositoryFactory().save).toHaveBeenCalledWith(createUserDataDto);
     });
 
 
-
+    
 
     
 
-    it('should return created user', async () => {
+    it('should return created user object', async () => {
       const result = {
             "id": 255,
             "userNameHashed": "9c2d29850e7fd884c19b3ef48a01b82c0a88854082ad150056ac770dcbeee05c",

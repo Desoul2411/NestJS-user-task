@@ -1,5 +1,6 @@
 import { UserEntity, UserId } from './user.entity';
 import * as mathUtils from '../../modules/utils/functions-helpers/math.utils';
+import { generateString } from '../../modules/utils/testing-helpers/generators.utils';
 
 
 jest.mock('../../modules/utils/functions-helpers/math.utils', () => ({
@@ -8,30 +9,37 @@ jest.mock('../../modules/utils/functions-helpers/math.utils', () => ({
 }));
 
 describe('UserEntity', () => {
+    let passwordGenerated;
+    
+    beforeEach(async () => {
+        passwordGenerated = generateString(64);
+    });
+
     describe('comparePasswords', () => {
         it('passwords match - should return true', () => {
             const userById = new UserEntity(
                 '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
-                'SUF2ang5Nk0xd1hCUENvNG5xTVk0eFBTK2pRc2hzQnVES2V4b04wQ3Mwdz0tLSs4RldxMDlzdkNNeDVpUm9ZZ2Jpbmc9PQ==',
-                'veryStrongPassword',
+                passwordGenerated,
+                passwordGenerated,
                 1,
                 '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
-                'veryStrongPassword',
-                'K0tzNVZmZ1d5bE1SV09nb2diRWdqZktpM1oyaC9NRWVVakpzYS9mKzZwcz0tLVNJeHBhbi9HUzBPbGxTSU1IcEJTVlE9PQ==',
+                passwordGenerated,
+                passwordGenerated,
             );
 
             expect(userById.comparePasswords(userById.userOldPassword, userById.currentUserPasswordDecrypted)).toBeTruthy();
         });
 
         it('passwords mismatch - should return false', () => {
+            const oldPasswordGenerated = generateString(64);
             const userById = new UserEntity(
                 '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
-                'SUF2ang5Nk0xd1hCUENvNG5xTVk0eFBTK2pRc2hzQnVES2V4b04wQ3Mwdz0tLSs4RldxMDlzdkNNeDVpUm9ZZ2Jpbmc9PQ==',
-                'newStrongPassword',
+                passwordGenerated,
+                passwordGenerated,
                 1,
                 '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
-                'oldStrongPassword',
-                'K0tzNVZmZ1d5bE1SV09nb2diRWdqZktpM1oyaC9NRWVVakpzYS9mKzZwcz0tLVNJeHBhbi9HUzBPbGxTSU1IcEJTVlE9PQ==',
+                oldPasswordGenerated,
+                passwordGenerated,
             );
 
             expect(userById.comparePasswords(userById.userOldPassword, userById.currentUserPasswordDecrypted)).toBeFalsy();
@@ -43,12 +51,12 @@ describe('UserEntity', () => {
         it('should return 1', () => {
             const userById = new UserEntity(
                 '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
-                'SUF2ang5Nk0xd1hCUENvNG5xTVk0eFBTK2pRc2hzQnVES2V4b04wQ3Mwdz0tLSs4RldxMDlzdkNNeDVpUm9ZZ2Jpbmc9PQ==',
-                'veryStrongPassword',
+                passwordGenerated,
+                passwordGenerated,
                 1,
                 '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
-                'veryStrongPassword',
-                'K0tzNVZmZ1d5bE1SV09nb2diRWdqZktpM1oyaC9NRWVVakpzYS9mKzZwcz0tLVNJeHBhbi9HUzBPbGxTSU1IcEJTVlE9PQ==',
+                passwordGenerated,
+                passwordGenerated,
             );
     
             const userByName = new UserEntity(
@@ -70,12 +78,12 @@ describe('UserEntity', () => {
         it('should return 2', () => {
             const userById = new UserEntity(
                 '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
-                'SUF2ang5Nk0xd1hCUENvNG5xTVk0eFBTK2pRc2hzQnVES2V4b04wQ3Mwdz0tLSs4RldxMDlzdkNNeDVpUm9ZZ2Jpbmc9PQ==',
-                'veryStrongPassword',
+                passwordGenerated,
+                passwordGenerated,
                 1,
                 '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
-                'veryStrongPassword',
-                'K0tzNVZmZ1d5bE1SV09nb2diRWdqZktpM1oyaC9NRWVVakpzYS9mKzZwcz0tLVNJeHBhbi9HUzBPbGxTSU1IcEJTVlE9PQ==',
+                passwordGenerated,
+                passwordGenerated,
             );
     
             const userByName = new UserEntity(
@@ -97,12 +105,12 @@ describe('UserEntity', () => {
         it('should return 3', () => {
             const userById = new UserEntity(
                 '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
-                'SUF2ang5Nk0xd1hCUENvNG5xTVk0eFBTK2pRc2hzQnVES2V4b04wQ3Mwdz0tLSs4RldxMDlzdkNNeDVpUm9ZZ2Jpbmc9PQ==',
-                'newStrongPassword',
+                passwordGenerated,
+                passwordGenerated,
                 1,
                 '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
-                'oldStrongPassword',
-                'K0tzNVZmZ1d5bE1SV09nb2diRWdqZktpM1oyaC9NRWVVakpzYS9mKzZwcz0tLVNJeHBhbi9HUzBPbGxTSU1IcEJTVlE9PQ==',
+                passwordGenerated,
+                passwordGenerated,
             );
     
             const userByName = new UserEntity(
