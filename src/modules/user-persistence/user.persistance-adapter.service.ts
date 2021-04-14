@@ -55,7 +55,7 @@ export class UserPersistenceAdapterService implements LoadUserByIdPort, LoadUser
       const currentUser = await this._userRepository.findOne(userId);
 
       if (!currentUser) {
-        throw new HttpException('NO_SUCH_USER', HttpStatus.NOT_FOUND);
+        throw new HttpException('No such user', HttpStatus.NOT_FOUND);
       }
 
       const currentUserDecryptedPasword = decrypt(currentUser.userPasswordEncrypted,ENC_KEY);

@@ -58,7 +58,7 @@ export class UsersController {
   @Put(':id')
   @ApiResponse({
     status: 200,
-    description: 'Password updated',
+    description: 'User updated',
     type: UserOrmEntity, 
   })
   @ApiResponse({
