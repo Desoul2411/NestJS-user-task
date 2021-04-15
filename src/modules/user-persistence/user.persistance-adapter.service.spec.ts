@@ -36,24 +36,15 @@ describe('UserPersistenceAdapterService', () => {
     "signature": "ac46abebcd7c8255f61f82afe7e57aec"
   };
 
-  let nameHashedGenerated, userPasswordEncryptedGenerated,createdUserExpectedResult;
-  let userPasswordGenerated;
-
-  const InvalidCreateUserDataDto = { 
-    "userName":"",
-    "userOldPassword":"veryStrongPassword",
-    "userNewPassword":"veryStrongPassword",
-    "signature": "82ef280c14ce9baa5e39a4b87bff7978"
-  }
+  let nameHashedGenerated, userPasswordEncryptedGenerated,createdUserExpectedResult, domainUser;
+  let passwordGenerated;
 
   class UserRepositoryFake {
     public async save(): Promise<void> {}
     public async findOne(): Promise<void> {}
-   // public async remove(): Promise<void> {}
-    
-  }
+  };
 
-
+  
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -69,10 +60,10 @@ describe('UserPersistenceAdapterService', () => {
     userPersistenceAdapterService = moduleRef.get<UserPersistenceAdapterService>(UserPersistenceAdapterService);
     userRepository = moduleRef.get(getRepositoryToken(UserOrmEntity));
 
+    passwordGenerated = generateString(64);
+
     nameHashedGenerated = generateString(64);
     userPasswordEncryptedGenerated = generateString(64);
-
-    userPasswordGenerated = generateString(64);
       
     (cipherUtils.hashToSha256 as jest.Mock).mockImplementation(() => nameHashedGenerated);
     (cipherUtils.encrypt as jest.Mock).mockImplementation(() => userPasswordEncryptedGenerated);
@@ -82,12 +73,22 @@ describe('UserPersistenceAdapterService', () => {
       "userNameHashed": nameHashedGenerated,
       "userPasswordEncrypted": userPasswordEncryptedGenerated,
       "group": null
-    }
+    };
+
+    const domainUser = new UserEntity (
+      '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
+      passwordGenerated,
+      passwordGenerated,
+      1,
+      '5ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e28403',
+      passwordGenerated,
+      passwordGenerated,
+    );
   });
 
 
   describe('createUser', () => {
-    it('calls the repository with correct paramaters', async () => {
+    it('should call the repository with correct paramaters and return created user object', async () => {
       const userDataToSave = {
         userNameHashed: createdUserExpectedResult.userNameHashed,
         userPasswordEncrypted: createdUserExpectedResult.userPasswordEncrypted,
@@ -96,20 +97,13 @@ describe('UserPersistenceAdapterService', () => {
 
       const userRepositorySaveSpy = jest.spyOn(userRepository, 'save').mockResolvedValue(createdUserExpectedResult);
 
-      await userPersistenceAdapterService.createUser(createUserDataDto);
-      
-      expect(userRepositorySaveSpy).toHaveBeenCalledTimes(1);
-      expect(userRepositorySaveSpy).toHaveBeenCalledWith(userDataToSave);
-    });
-
-
-    it('should return created user object', async () => {
-      jest.spyOn(userRepository, 'save').mockResolvedValue(createdUserExpectedResult);
-
       const res = await userPersistenceAdapterService.createUser(createUserDataDto);
 
+      expect(userRepositorySaveSpy).toHaveBeenCalledTimes(1);
+      expect(userRepositorySaveSpy).toHaveBeenCalledWith(userDataToSave);
       expect(res).toEqual(createdUserExpectedResult);
     });
+
 
     it('should throw INTERNAL_SERVER_ERROR with status 500', async () => {
       jest.spyOn(userRepository, 'save').mockRejectedValue(new HttpException('INTERNAL_SERVER_ERROR', HttpStatus.INTERNAL_SERVER_ERROR));
@@ -125,7 +119,8 @@ describe('UserPersistenceAdapterService', () => {
 
 
   describe('loadUserByName', () => {
-    it('should call the repository and mapUserByNametoDomain function with correct paramaters', async () => {
+    it(`call the repository and mapUserByNametoDomain function with correct paramaters 
+      and return UserEntity instance if findOne repository method returned found user`, async () => {
       const foundUser = {
         "id": 1,
         "userNameHashed": nameHashedGenerated,
@@ -141,12 +136,12 @@ describe('UserPersistenceAdapterService', () => {
         foundUser.userNameHashed,
         null,
         null
-    );
+      );
 
       const userRepositoryFindOneSpy = jest.spyOn(userRepository, 'findOne').mockResolvedValue(foundUser);
-      const mapUserByNametoDomainSpy = jest.spyOn(UserMapper,'mapUserByNametoDomain').mockReturnValue(mappedToDomainEntityUser)
+      const mapUserByNametoDomainSpy = jest.spyOn(UserMapper,'mapUserByNametoDomain').mockReturnValue(mappedToDomainEntityUser);
 
-      await userPersistenceAdapterService.loadUserByName(createUserDataDto.userName);
+      const res = await userPersistenceAdapterService.loadUserByName(createUserDataDto.userName);
       
       expect(userRepositoryFindOneSpy).toHaveBeenCalledWith({
         userNameHashed: nameHashedGenerated,
@@ -154,32 +149,6 @@ describe('UserPersistenceAdapterService', () => {
       expect(userRepositoryFindOneSpy).toHaveBeenCalledTimes(1);
       expect(mapUserByNametoDomainSpy).toHaveBeenCalledWith(foundUser);
       expect(mapUserByNametoDomainSpy).toHaveBeenCalledTimes(1);
-    });
-
-
-    it('should return UserEntity instance if findOne repository method returned found user', async () => {
-      const foundUser = {
-        "id": 1,
-        "userNameHashed": nameHashedGenerated,
-        "userPasswordEncrypted": userPasswordEncryptedGenerated,
-        "group": null
-      };
-
-      const mappedToDomainEntityUser = new UserEntity(
-        null,
-        null,
-        null,
-        null,
-        foundUser.userNameHashed,
-        null,
-        null
-    );
-
-      jest.spyOn(userRepository, 'findOne').mockResolvedValue(foundUser);
-      jest.spyOn(UserMapper,'mapUserByNametoDomain').mockReturnValue(mappedToDomainEntityUser)
-
-      const res = await userPersistenceAdapterService.loadUserByName(createUserDataDto.userName);
-      
       expect(res).toEqual(mappedToDomainEntityUser);
     });
 
@@ -207,7 +176,7 @@ describe('UserPersistenceAdapterService', () => {
 
 
   describe('loadUserById ', () => {
-    it('should call the repository and mapUserByNametoDomain function with correct paramaters', async () => {
+    it('call the repository and mapUserByNametoDomain function with correct paramaters and return UserEntity instance', async () => {
       const currentUserDecryptedPasword = generateString(64);
       const userNewPasswordEncrypted = generateString(64);
       const userNewNameHashed = generateString(64);
@@ -235,9 +204,8 @@ describe('UserPersistenceAdapterService', () => {
       (cipherUtils.encrypt as jest.Mock).mockImplementation(() => userNewPasswordEncrypted);
       (cipherUtils.hashToSha256 as jest.Mock).mockImplementation(() => userNewNameHashed);
       
-      const mapUserByIdtoDomainSpy = jest.spyOn(UserMapper,'mapUserByIdtoDomain').mockReturnValue(mappedToDomainEntityUser);
-
-      await userPersistenceAdapterService.loadUserById(1, createUserDataDto);
+      const mapUserByIdtoDomainSpy = jest.spyOn(UserMapper,'mapUserByIdtoDomain').mockReturnValue(mappedToDomainEntityUser)
+      const res = await userPersistenceAdapterService.loadUserById(1, createUserDataDto);
 
       expect(userRepositoryFindOneSpy).toHaveBeenCalledWith(
         foundUser.id,
@@ -252,40 +220,6 @@ describe('UserPersistenceAdapterService', () => {
         userNewNameHashed
       );
       expect(mapUserByIdtoDomainSpy).toHaveBeenCalledTimes(1);
-    });
-
-
-    it('should return UserEntity instance', async () => {
-      const currentUserDecryptedPasword = generateString(64);
-      const userNewPasswordEncrypted = generateString(64);
-      const userNewNameHashed = generateString(64);
-
-      const foundUser = {
-        "id": 1,
-        "userNameHashed": nameHashedGenerated,
-        "userPasswordEncrypted": userPasswordEncryptedGenerated,
-        "group": null
-      };
-
-      const mappedToDomainEntityUser = new UserEntity(
-        foundUser.userNameHashed,
-        foundUser.userPasswordEncrypted,
-        currentUserDecryptedPasword,
-        foundUser.id,
-        userNewNameHashed,
-        createUserDataDto.userOldPassword,
-        userNewPasswordEncrypted,
-      );
-
-      jest.spyOn(userRepository, 'findOne').mockResolvedValue(foundUser);
-
-      (cipherUtils.decrypt as jest.Mock).mockImplementation(() => currentUserDecryptedPasword);
-      (cipherUtils.encrypt as jest.Mock).mockImplementation(() => userNewPasswordEncrypted);
-      (cipherUtils.hashToSha256 as jest.Mock).mockImplementation(() => userNewNameHashed);
-      
-      jest.spyOn(UserMapper,'mapUserByIdtoDomain').mockReturnValue(mappedToDomainEntityUser)
-      const res = await userPersistenceAdapterService.loadUserById(1, createUserDataDto);
-
       expect(res).toBeInstanceOf(UserEntity);
       expect(res).toEqual(mappedToDomainEntityUser);
     });
@@ -306,18 +240,6 @@ describe('UserPersistenceAdapterService', () => {
 
   describe('updateUserState', () => {
     it('should call the repository with coorrect parameters and return updated user', async () => {
-      const passwordGenerated = generateString(64);
-
-      const domainUser = new UserEntity (
-        '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
-        passwordGenerated,
-        passwordGenerated,
-        1,
-        '5ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e28403',
-        passwordGenerated,
-        passwordGenerated,
-      );
-
       const updatedUser = {
         "id": 1,
         "userNameHashed": nameHashedGenerated,
@@ -336,22 +258,10 @@ describe('UserPersistenceAdapterService', () => {
       expect(userRepositorySaveSpy).toHaveBeenCalledTimes(1);
       expect(res).toEqual(updatedUser);
     });
-
   });
 
   it('should throw INTERNAL_SERVER_ERROR with status 500', async () => {
     jest.spyOn(userRepository, 'save').mockRejectedValue(new HttpException('INTERNAL_SERVER_ERROR', HttpStatus.INTERNAL_SERVER_ERROR));
-    const passwordGenerated = generateString(64);
-
-    const domainUser = new UserEntity (
-      '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
-      passwordGenerated,
-      passwordGenerated,
-      1,
-      '5ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e28403',
-      passwordGenerated,
-      passwordGenerated,
-    );
 
     try {
       await userPersistenceAdapterService.updateUserState(domainUser);
@@ -360,8 +270,6 @@ describe('UserPersistenceAdapterService', () => {
       expect(e.status).toBe(500);
     }
   });
-
-
 });
 
 
