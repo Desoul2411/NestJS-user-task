@@ -28,13 +28,6 @@ describe('UsersController', () => {
     "signature": "ac46abebcd7c8255f61f82afe7e57aec"
   }
 
-  const updateUserDataDto = {
-    "userName":"Joe",
-    "userOldPassword":passwordGenerated,
-    "userNewPassword":passwordGenerated,
-    "signature": "ac46abebcd7c8255f61f82afe7e57aec"
-  }
-
   const createdUserExpectedResult = {
     "id": 1,
     "userNameHashed": "b8ea7132aeb096a3cdc8cd453075f8bd53ead6120baf545299e4949aeb9ff5ba",
@@ -83,8 +76,6 @@ describe('UsersController', () => {
     createUserDataDto.userNewPassword = passwordGenerated;
     createUserDataDto.userOldPassword = passwordGenerated;
     createdUserExpectedResult.userPasswordEncrypted = passwordGenerated;
-    updateUserDataDto.userOldPassword = passwordGenerated;
-    updateUserDataDto.userNewPassword = passwordGenerated;
   });
 
   describe('create', () => {
@@ -112,14 +103,14 @@ describe('UsersController', () => {
 
     it('should return updated user object - success', async () => {
       updateUserMock.mockResolvedValue(updatedUserExpectedResult);
-      expect(await usersController.update(1,updateUserDataDto)).toEqual(updatedUserExpectedResult);
+      expect(await usersController.update(1,createUserDataDto)).toEqual(updatedUserExpectedResult);
     });
 
     it('should throw an error with status 404 and message "No such user" - fail', async() => {
       updateUserMock.mockRejectedValue(new HttpException('No such user', HttpStatus.NOT_FOUND));
 
       try {
-        await usersController.update(25,updateUserDataDto);
+        await usersController.update(25,createUserDataDto);
       } catch(e) {
         expect(e.message).toBe('No such user');
         expect(e.status).toBe(404);
@@ -130,7 +121,7 @@ describe('UsersController', () => {
       updateUserMock.mockRejectedValue(new HttpException('Invalid old password!', HttpStatus.FORBIDDEN));
 
       try {
-        await usersController.update(1,updateUserDataDto);
+        await usersController.update(1,createUserDataDto);
       } catch(e) {
         expect(e.message).toBe('Invalid old password!');
         expect(e.status).toBe(403);

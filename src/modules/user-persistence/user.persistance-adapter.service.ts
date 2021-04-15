@@ -62,7 +62,13 @@ export class UserPersistenceAdapterService implements LoadUserByIdPort, LoadUser
       const userNewPasswordEncrypted = encrypt(userNewPassword, ENC_KEY);
       const userNewNameHashed = hashToSha256(userName, HASH_SECRET);
 
-      return UserMapper.mapUserByIdtoDomain(currentUser, userOldPassword, currentUserDecryptedPasword, userNewPasswordEncrypted, userNewNameHashed);
+      return UserMapper.mapUserByIdtoDomain(
+        currentUser,
+        userOldPassword,
+        currentUserDecryptedPasword,
+        userNewPasswordEncrypted,
+        userNewNameHashed
+      );
     }
     
 
