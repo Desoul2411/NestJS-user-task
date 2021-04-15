@@ -72,7 +72,7 @@ export class UserPersistenceAdapterService implements LoadUserByIdPort, LoadUser
     }
     
 
-    async updateUserState(user: UserEntity) {
+    async updateUserState(user: UserEntity): Promise<UserOrmEntity> {
        try {
         return await this._userRepository.save(UserMapper.mapToUserOrmEntity(user));
       } catch (error) {

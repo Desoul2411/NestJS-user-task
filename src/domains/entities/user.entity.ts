@@ -72,7 +72,7 @@ export class UserEntity {
         }
 	}
 
-    public selectUserGroup(sameUserName: UserName | undefined, userId: UserId): boolean {
+    public selectUserGroup(sameUserName: UserName | undefined, userId: UserId): number {
         const checkNumber = Math.abs(factorial(userId) - fib(userId));
         console.log('checkNumber', checkNumber);
         let group;

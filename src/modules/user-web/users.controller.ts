@@ -9,13 +9,10 @@ import {
   Inject,
 } from '@nestjs/common';
 import { CreateUserDataDto } from './dto/create-user-data.dto';
-/* import { UsersDataService } from './users.service'; */
 import { SignatureGuard } from './guards/signature.guard';
 import { ValidationPipe } from './validation.pipe';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ErrorResponse403, ErrorResponse404, ErrorResponse400 } from './error.type';
-/* import { CreateUserUseCase, CreateUserUseCaseSymbol } from 'src/domains/ports/in/create-user.use-case'; */
-/* import { CreateUserCommand } from 'src/domains/ports/in/create-user.command'; */
 import { UserOrmEntity } from '../user-persistence/user.orm.entity';
 import { UpdateUserUseCase, UpdateUserUseCaseSymbol } from '../../domains/ports/in/update-user.use-case';
 import { UpdateUserCommand } from '../../domains/ports/in/update-user.command';

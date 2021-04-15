@@ -49,7 +49,7 @@ describe('UserPersistenceAdapterService', () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         UserPersistenceAdapterService,
-        {provide:  getRepositoryToken(UserOrmEntity), useClass: UserRepositoryFake },
+        { provide:  getRepositoryToken(UserOrmEntity), useClass: UserRepositoryFake },
         {
           provide: UpdateUserUseCaseSymbol,
           useValue: mockValue
@@ -204,7 +204,7 @@ describe('UserPersistenceAdapterService', () => {
       (cipherUtils.encrypt as jest.Mock).mockImplementation(() => userNewPasswordEncrypted);
       (cipherUtils.hashToSha256 as jest.Mock).mockImplementation(() => userNewNameHashed);
       
-      const mapUserByIdtoDomainSpy = jest.spyOn(UserMapper,'mapUserByIdtoDomain').mockReturnValue(mappedToDomainEntityUser)
+      const mapUserByIdtoDomainSpy = jest.spyOn(UserMapper,'mapUserByIdtoDomain').mockReturnValue(mappedToDomainEntityUser);
       const res = await userPersistenceAdapterService.loadUserById(1, createUserDataDto);
 
       expect(userRepositoryFindOneSpy).toHaveBeenCalledWith(
@@ -239,7 +239,7 @@ describe('UserPersistenceAdapterService', () => {
 
 
   describe('updateUserState', () => {
-    it('should call the repository with coorrect parameters and return updated user', async () => {
+    it('should call the repository with correct parameters and return updated user', async () => {
       const updatedUser = {
         "id": 1,
         "userNameHashed": nameHashedGenerated,
