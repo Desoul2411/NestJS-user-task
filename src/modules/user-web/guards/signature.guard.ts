@@ -32,13 +32,13 @@ export class SignatureGuard implements CanActivate {
         .sort((a, b) => a[0].localeCompare(b[0]))
         .join('and');
       const resultStr = `${method}and${url.substr(1)}-${paramsStr}`;
-      console.log(resultStr);
+     // console.log(resultStr);
       return resultStr;
     };
 
     const md5SignatureString = md5(convertObjectFormattedString(rest, method, url));
 
-    console.log(md5SignatureString);
+   // console.log(md5SignatureString);
 
     if (signature !== md5SignatureString) {
       return false;

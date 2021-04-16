@@ -1,0 +1,12 @@
+
+version: '3'
+
+services:
+  user-project:
+    image: user-project:latest
+    container_name: user-project
+    restart: always
+    ports: 
+      - 3000:3000
+    volumes:
+      - ./.env:/app/.env  

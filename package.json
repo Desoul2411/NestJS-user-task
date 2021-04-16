@@ -37,7 +37,8 @@
     "rxjs": "^6.6.6",
     "swagger-ui-express": "^4.1.6",
     "ts-mockito": "^2.6.1",
-    "typeorm": "^0.2.31"
+    "typeorm": "^0.2.31",
+    "why-is-node-running": "^2.2.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.5.6",

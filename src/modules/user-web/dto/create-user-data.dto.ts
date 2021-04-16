@@ -5,7 +5,7 @@ export class CreateUserDataDto {
   @ApiProperty()// for Swagger
   @IsString()
   @IsNotEmpty()
-  userName: string;
+  userName!: string;
 
   @ApiProperty()
   @IsString()

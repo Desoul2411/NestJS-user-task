@@ -45,6 +45,7 @@ export class UsersController {
     type: ErrorResponse400,
   })
   @ApiBody({ type: CreateUserDataDto }) // for Swagger
+  @UseGuards(SignatureGuard)
   create(
     @Body(new ValidationPipe()) createProductDto: CreateUserDataDto,
   ): Promise<UserOrmEntity> {
@@ -69,7 +70,7 @@ export class UsersController {
     type: ErrorResponse400,
   })
   @ApiBody({ type: CreateUserDataDto })
-  //@UseGuards(SignatureGuard)
+  @UseGuards(SignatureGuard)
   async update(
     @Param('id') id: number,
     @Body(new ValidationPipe()) createUserDataDto: CreateUserDataDto,
@@ -80,7 +81,6 @@ export class UsersController {
     )
 
     return await this._userUpdateService.updateUser(updateUserCommand);
-
   }
 }
 

@@ -2,9 +2,9 @@
 import {Global, Module} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
 /* import { CreateUserUseCaseSymbol } from 'src/domains/ports/in/create-user.use-case'; */
-import { UpdateUserUseCaseSymbol } from 'src/domains/ports/in/update-user.use-case';
+import { UpdateUserUseCaseSymbol } from '../../domains/ports/in/update-user.use-case';
 /* import { CreateUserService } from 'src/domains/services/create-user.service'; */
-import { UpdateUserService } from 'src/domains/services/update-user.service';
+import { UpdateUserService } from '../../domains/services/update-user.service';
 import { UserOrmEntity } from './user.orm.entity';
 import { UserPersistenceAdapterService } from './user.persistance-adapter.service';
 

@@ -66,3 +66,165 @@ https://gist.github.com/siwalikm/8311cf0a287b98ef67c73c1b03b47154
 
 http://localhost:3000/swagger/
 http://localhost:3000/api/v1/user
+
+
+
+
+
+/encrypt code
+https://gist.github.com/siwalikm/8311cf0a287b98ef67c73c1b03b47154
+
+{
+  "userId": 10,
+  "userName":'strongPassword',
+  "userOldPassword":'strongPassword',
+  "userNewPassword":'veryStrongPassword',
+  "signature": string
+}
+
+
+http://localhost:3000/swagger/
+http://localhost:3000/api/v1/user
+
+
+
+
+
+//create docker image and run container from Dockerfile:
+sudo docker build -t prakhar1989/foodtrucks-web .
+
+//start app
+ sudo docker run -P prakhar1989/foodtrucks-web
+
+//run image
+sudo docker run <imageid or tag?
+
+//Now your up is running on http://172.17.0.3:3000/   - 3000 - default port
+
+
+
+
+
+DOCKER and MySQL:
+
+login docker:
+sudo su -${user}
+
+
+CREATE DB CONTAINER:
+docker container run -d --name mysqldb -p 3307:3307 -e MYSQL_ROOT_PASSWORD=p1 mysql:latest
+docker exec -it mysqldb bash   - need  to input every time before the login
+
+
+ENTER THE DB:
+mysql -u root -p1             - login with password "1"  - for enter to localdb (bo need to "docker exec -it mysqldb bash" before it);
+mysql -u root -pp1              - login with password "p1" to new created db (need to "docker exec -it mysqldb bash" before it)
+
+exit  - exit from MySQL terminal
+
+docker rmi  -f <image id or name>  - delete image
+docker rm  -f <container id or name>  - delete image
+
+docker stop <container id or name> - stop container 
+docker start <container id or name> - start container 
+
+
+
+
+GET DB IP (input one by one):
+docker inspect -f \
+'{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
+75000c343eb7      //mysql container id
+
+OR sudo docker inspect 3816436e9715   - 3816436e9715 - container's id
+
+
+
+NOW we are in MySQL (inner MySqlCommands - ";" - is mandatory ro use in the end of string ):
+create database user_schema;
+
+use user_schema;  - to SAVE changes!;
+
+
+
+
+NOW we can coonect to db using hostname:172.17.0.2 and password p1
+//app db settings from app.module.ts:
+ TypeOrmModule.forRoot({
+      type: 'mysql',
+      //host: 'localhost',
+      host: '172.17.0.2',
+      port: 3306,
+      username: 'root',
+      //password: 'p1',
+      password: 'p1',
+      database: 'user_schema',
+      //database:'company',
+      entities: [User],
+      synchronize: true,
+
+
+
+
+
+// Now run app container and db container and get down to work!)
+
+
+
+drop database user_schema;    - to delete db
+
+
+
+create table team ( id int not null, name text, primary key (id) );
+
+
+insert into team (id , name) values (1, 'Thetips4you');
+
+insert into team (id , name) values (2, 'King');
+
+insert into team (id , name) values (3, 'Queen');
+
+select * from team;
+
+
+
+
+
+
+
+DOCKER COMMANDS
+-it is used to list all the running containers.
+docker container ls -a
+
+-To show all containers use the given command:
+docker ps -a
+
+- To show all images
+ docker images
+
+
+-to stop all the Docker containers (force)
+docker rm -f $(docker ps -a -q)  
+
+
+
+
+DELETE CONTAINER
+docker rm -f lucid_blackwell  -       lucid_blackwell - name or id
+
+
+
+
+
+
+
+
+
+
+
+*** разобраться 
+ EXPOSE 5000
+ 
+docker run -p 8888:5000 prakhar1989/catnip
+ 
+запускать на localhost:8888

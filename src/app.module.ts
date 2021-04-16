@@ -4,18 +4,23 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { UserOrmEntity } from './modules/user-persistence/user.orm.entity';
 import { UserPersistenceModule } from './modules/user-persistence/user-persistance.module';
+require('dotenv').config();
+
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '1',
-      database: 'user_schema',
+     // host: 'localhost',
+      host: process.env.MYSQL_HOST,
+      port: +process.env.HTTP_PORT,
+      username: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DB,
       entities: [UserOrmEntity],
       synchronize: true,
+      keepConnectionAlive: true,
+      dropSchema: true
     }),
     UsersModule,
     UserPersistenceModule
