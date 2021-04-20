@@ -11,7 +11,7 @@ import { Connection, createConnection, getConnection } from 'typeorm';
 describe('UsersController (e2e)', () => {
   let app: INestApplication;
   let userId: string;
-
+  let module: TestingModule;
 
   const dtoToCreate: CreateUserDataDto = {
     "userName":"Alexei",
@@ -115,14 +115,14 @@ describe('UsersController (e2e)', () => {
 
 
   beforeAll(async (done) => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
+    app = module.createNestApplication();
     app.get(Connection);
     await app.init();
-    done()
+    done();
   });
 
   //const repository = await getConnection().getRepository(entity.name);   UserOrmEntity // Get repository

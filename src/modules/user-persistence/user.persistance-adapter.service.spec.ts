@@ -75,7 +75,7 @@ describe('UserPersistenceAdapterService', () => {
       "group": null
     };
 
-    const domainUser = new UserEntity (
+    domainUser = new UserEntity (
       '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
       passwordGenerated,
       passwordGenerated,
@@ -258,18 +258,21 @@ describe('UserPersistenceAdapterService', () => {
       expect(userRepositorySaveSpy).toHaveBeenCalledTimes(1);
       expect(res).toEqual(updatedUser);
     });
+
+    it('should throw INTERNAL_SERVER_ERROR with status 500', async () => {
+      jest.spyOn(userRepository, 'save').mockRejectedValue(new HttpException('INTERNAL_SERVER_ERROR', HttpStatus.INTERNAL_SERVER_ERROR));
+  
+      try {
+        await userPersistenceAdapterService.updateUserState(domainUser);
+      } catch(e) {
+        expect(e.message).toBe('INTERNAL_SERVER_ERROR');
+        expect(e.status).toBe(500);
+      }
+    });
+
   });
 
-  it('should throw INTERNAL_SERVER_ERROR with status 500', async () => {
-    jest.spyOn(userRepository, 'save').mockRejectedValue(new HttpException('INTERNAL_SERVER_ERROR', HttpStatus.INTERNAL_SERVER_ERROR));
-
-    try {
-      await userPersistenceAdapterService.updateUserState(domainUser);
-    } catch(e) {
-      expect(e.message).toBe('INTERNAL_SERVER_ERROR');
-      expect(e.status).toBe(500);
-    }
-  });
+  
 });
 
 

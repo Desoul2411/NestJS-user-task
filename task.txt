@@ -91,10 +91,10 @@ http://localhost:3000/api/v1/user
 
 
 //create docker image and run container from Dockerfile:
-sudo docker build -t prakhar1989/foodtrucks-web .
+sudo docker build -t desoul2411/user-project .
 
 //start app
- sudo docker run -P prakhar1989/foodtrucks-web
+ sudo docker run -P desoul2411/user-project
 
 //run image
 sudo docker run <imageid or tag?

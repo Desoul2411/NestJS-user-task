@@ -19,7 +19,7 @@ require('dotenv').config();
       database: process.env.MYSQL_DB,
       entities: [UserOrmEntity],
       synchronize: true,
-      keepConnectionAlive: true,
+      //keepConnectionAlive: true,
       dropSchema: true
     }),
     UsersModule,
