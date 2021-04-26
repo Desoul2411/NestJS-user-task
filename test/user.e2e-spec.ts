@@ -143,7 +143,7 @@ describe('UsersController (e2e)', () => {
       })
   });
 
-  it('/user (POST) - create - fail (throw validation failed error when dto parameters have invalid type)', () => {
+  it('/user (POST) - create - fail (throw validation failed error when dto properties have invalid type)', () => {
     return request(app.getHttpServer())
       .post('/user')
       .send(invalidTypesCreateDTO)
@@ -253,7 +253,7 @@ describe('UsersController (e2e)', () => {
       
   });
 
-  it('/user (PUT) - update - fail (throw validation failed error when dto parameters have invalid type)', () => {
+  it('/user (PUT) - update - fail (throw validation failed error when dto properties have invalid type)', () => {
     return request(app.getHttpServer())
       .put('/user/1')
       .send(invalidTypesUpdateDTO)
