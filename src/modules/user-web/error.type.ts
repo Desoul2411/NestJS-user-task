@@ -17,7 +17,7 @@ export class ErrorResponse404 {
   })
   statusCode: number;
   @ApiProperty({
-    default:"Not found"
+    default:"No such user"
   })
   message: string;
 }

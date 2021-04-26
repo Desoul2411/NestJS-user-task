@@ -11,7 +11,7 @@ import {
 import { CreateUserDataDto } from './dto/create-user-data.dto';
 import { SignatureGuard } from './guards/signature.guard';
 import { ValidationPipe } from './validation.pipe';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ErrorResponse403, ErrorResponse404, ErrorResponse400 } from './error.type';
 import { UserOrmEntity } from '../user-persistence/user.orm.entity';
 import { UpdateUserUseCase, UpdateUserUseCaseSymbol } from '../../domains/ports/in/update-user.use-case';
@@ -29,6 +29,7 @@ export class UsersController {
 
 
   @Post()
+  @ApiOperation({summary:'create user'})
   @ApiResponse({
     status: 200,
     description: 'User created',
@@ -54,6 +55,7 @@ export class UsersController {
 
 
   @Put(':id')
+  @ApiOperation({summary:'update user'})
   @ApiResponse({
     status: 200,
     description: 'User updated',
@@ -63,6 +65,11 @@ export class UsersController {
     status: 403,
     description: 'Access forbidden',
     type: ErrorResponse403,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No such user',
+    type: ErrorResponse404,
   })
   @ApiResponse({
     status: 400,

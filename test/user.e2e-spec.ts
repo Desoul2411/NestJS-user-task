@@ -264,7 +264,6 @@ describe('UsersController (e2e)', () => {
       });
   });
 
-
   it('/user (PUT) - update - fail  (throw validation failed error when dto passed without required properties)', () => {
     return request(app.getHttpServer())
       .put('/user/1')
