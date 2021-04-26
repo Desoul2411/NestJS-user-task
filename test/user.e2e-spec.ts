@@ -165,7 +165,7 @@ describe('UsersController (e2e)', () => {
       });
   });
 
-  it('/user (POST) - fail (invalid signature)', () => {
+  it('/user (POST) - create - fail (invalid signature)', () => {
     return request(app.getHttpServer())
       .post('/user')
       .send(invalidSignatureDTO)

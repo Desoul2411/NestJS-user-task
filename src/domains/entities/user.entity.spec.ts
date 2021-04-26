@@ -18,11 +18,11 @@ describe('UserEntity', () => {
     describe('comparePasswords', () => {
         it('passwords match - should return true', () => {
             const userById = new UserEntity(
-                '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
+                '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',   // _currentUserNameHashed
                 passwordGenerated,
                 passwordGenerated,
                 1,
-                '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
+                '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',  // _userNewNameHashed
                 passwordGenerated,
                 passwordGenerated,
             );
