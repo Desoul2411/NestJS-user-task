@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { UserOrmEntity } from './modules/user-persistence/user.orm.entity';
 import { UserPersistenceModule } from './modules/user-persistence/user-persistance.module';
-//require('dotenv').config();
 import * as dotenv from 'dotenv';
 dotenv.config();
 

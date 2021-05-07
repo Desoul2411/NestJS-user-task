@@ -14,9 +14,7 @@ import { UserPersistenceAdapterService } from './user.persistance-adapter.servic
     UserPersistenceAdapterService,
     {
       provide: UpdateUserUseCaseSymbol,
-      useFactory: (
-        userPersistenceAdapterService: UserPersistenceAdapterService,
-      ) => {
+      useFactory: (userPersistenceAdapterService: UserPersistenceAdapterService) => {
         return new UpdateUserService(
           userPersistenceAdapterService,
           userPersistenceAdapterService,
