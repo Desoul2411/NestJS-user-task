@@ -22,6 +22,6 @@ export class UserOrmEntity {
   userPasswordEncrypted: string;
 
   @ApiProperty({ example: '2', description: 'user group number' })
-  @Column({default: null})
-  group: number
+  @Column({ default: null })
+  group: number;
 }

@@ -1,127 +1,141 @@
-
-import { LoadUserByIdPort}  from '../ports/out/load-user-by-id.port';
-import { LoadUserByNamePort } from '../ports/out/load-user-by-name.port';
-import { UpdateUserStatePort } from '../ports/out/update-user-port';
-import { UserEntity, UserId } from '../entities/user.entity';
-import { CreateUserDataDto}  from '../../modules/user-web/dto/create-user-data.dto';
+import { UserEntity } from '../entities/user.entity';
 import { UpdateUserCommand } from '../ports/in/update-user.command';
 import { UpdateUserService } from './update-user.service';
 import { generateString } from '../../modules/utils/testing-helpers/generators.utils';
 
 describe('UpdateUserService', () => {
+  const loadUserByIdPortMock = {
+    loadUserById: jest.fn(),
+  };
 
-    const loadUserByIdPortMock = {
-        loadUserById: jest.fn()
+  const loadUserByNamePort = {
+    loadUserByName: jest.fn(),
+  };
+
+  const updateUserStatePort = {
+    updateUserState: jest.fn(),
+  };
+
+  const updateUserServce = new UpdateUserService(
+    loadUserByIdPortMock,
+    loadUserByNamePort,
+    updateUserStatePort,
+  );
+
+  let createUserDataDto, userById, userByName, updatedUser;
+
+  beforeEach(async () => {
+    const passwordGenerated = generateString(64);
+
+    createUserDataDto = {
+      userName: 'gdfgjuuyg978989sdhdsfdasdasdasdsudf',
+      userOldPassword: passwordGenerated,
+      userNewPassword: passwordGenerated,
+      signature: 'ac46abebcd7c8255f61f82afe7e57aec',
     };
 
-    const loadUserByNamePort = {
-        loadUserByName: jest.fn()
+    userById = new UserEntity(
+      '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
+      passwordGenerated,
+      passwordGenerated,
+      1,
+      '5ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e28403',
+      passwordGenerated,
+      passwordGenerated,
+    );
+
+    userByName = new UserEntity(
+      null,
+      null,
+      null,
+      null,
+      '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
+      null,
+      null,
+    );
+
+    updatedUser = {
+      id: 1,
+      userNameHashed:
+        '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
+      userPasswordEncrypted: passwordGenerated,
+      group: 2,
     };
+  });
 
-    const updateUserStatePort = {
-        updateUserState: jest.fn()
-    };
+  describe('updateUser', () => {
+    it('should call internal functions with correct parameters and return updated user', async () => {
+      const command = new UpdateUserCommand(1, createUserDataDto);
 
-   const updateUserServce =  new UpdateUserService(loadUserByIdPortMock, loadUserByNamePort, updateUserStatePort);
+      const loadUserByIdOneSpy = jest
+        .spyOn(loadUserByIdPortMock, 'loadUserById')
+        .mockResolvedValue(userById);
+      const loadUserByNameSpy = jest
+        .spyOn(loadUserByNamePort, 'loadUserByName')
+        .mockResolvedValue(userByName);
+      const comparePasswordsSpy = jest
+        .spyOn(userById, 'comparePasswords')
+        .mockReturnValue(true);
+      const selectUserGroupSpy = jest
+        .spyOn(userById, 'selectUserGroup')
+        .mockReturnValue(2);
+      const updateUserSetStateSpy = jest
+        .spyOn(updateUserStatePort, 'updateUserState')
+        .mockReturnValue(updatedUser);
 
-   let createUserDataDto, userById, userByName, updatedUser;
+      const res = await updateUserServce.updateUser(command);
 
-   beforeEach(async () => {
-        const passwordGenerated = generateString(64);
+      expect(loadUserByIdOneSpy).toHaveBeenCalledWith(
+        command.id,
+        command.userData,
+      );
+      expect(loadUserByIdOneSpy).toHaveBeenCalledTimes(1);
 
-        createUserDataDto = {
-            "userName":"gdfgjuuyg978989sdhdsfdasdasdasdsudf",
-            "userOldPassword": passwordGenerated,
-            "userNewPassword": passwordGenerated,
-            "signature": "ac46abebcd7c8255f61f82afe7e57aec"
-        };
+      expect(loadUserByNameSpy).toHaveBeenCalledWith(command.userData.userName);
+      expect(loadUserByNameSpy).toHaveBeenCalledTimes(1);
 
-        userById = new UserEntity (
-            '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
-            passwordGenerated,
-            passwordGenerated,
-            1,
-            '5ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e28403',
-            passwordGenerated,
-            passwordGenerated,
-        );
+      expect(comparePasswordsSpy).toHaveBeenCalledWith(
+        userById.userOldPassword,
+        userById.currentUserPasswordDecrypted,
+      );
+      expect(comparePasswordsSpy).toHaveBeenCalledTimes(1);
 
-        userByName = new UserEntity(
-            null,
-            null,
-            null,
-            null,
-            '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
-            null,
-            null
-        );
+      expect(selectUserGroupSpy).toHaveBeenCalledWith(
+        userByName.userNewNameHashed,
+        userById.userId,
+      );
+      expect(selectUserGroupSpy).toHaveBeenCalledTimes(1);
 
-        updatedUser = {
-            "id": 1,
-            "userNameHashed": '8ab93ab71fe07dc816c8650a8d3ad3f98bd5743957aa732816ad82955c9e2840',
-            "userPasswordEncrypted": passwordGenerated,
-            "group": 2
-        };
+      expect(updateUserSetStateSpy).toHaveBeenCalledWith(userById);
+      expect(updateUserSetStateSpy).toHaveBeenCalledTimes(1);
+
+      expect(res).toEqual(updatedUser);
     });
 
-   
-    describe('updateUser', () => {
-        it ('should call internal functions with correct parameters and return updated user', async () => {
-            const command = new UpdateUserCommand(1,createUserDataDto);
+    it('should throw an error with status 403 and message "Invalid old password!"', async () => {
+      const command = new UpdateUserCommand(1, createUserDataDto);
 
-            const loadUserByIdOneSpy = jest.spyOn(loadUserByIdPortMock, 'loadUserById').mockResolvedValue(userById);
-            const loadUserByNameSpy = jest.spyOn(loadUserByNamePort, 'loadUserByName').mockResolvedValue(userByName);
-            const  comparePasswordsSpy = jest.spyOn(userById, 'comparePasswords').mockReturnValue(true);
-            const  selectUserGroupSpy = jest.spyOn(userById, 'selectUserGroup').mockReturnValue(2);
-            const  updateUserSetStateSpy = jest.spyOn(updateUserStatePort, 'updateUserState').mockReturnValue(updatedUser);
+      jest
+        .spyOn(loadUserByIdPortMock, 'loadUserById')
+        .mockResolvedValue(userById);
+      jest
+        .spyOn(loadUserByNamePort, 'loadUserByName')
+        .mockResolvedValue(userByName);
+      jest.spyOn(userById, 'comparePasswords').mockReturnValue(false);
+      jest.spyOn(userById, 'selectUserGroup').mockReturnValue(2);
+      jest
+        .spyOn(updateUserStatePort, 'updateUserState')
+        .mockReturnValue(updatedUser);
 
-            const res = await updateUserServce.updateUser(command);
-
-            expect(loadUserByIdOneSpy).toHaveBeenCalledWith(command.id, command.userData);
-            expect(loadUserByIdOneSpy).toHaveBeenCalledTimes(1);
-
-            expect(loadUserByNameSpy).toHaveBeenCalledWith(command.userData.userName);
-            expect(loadUserByNameSpy).toHaveBeenCalledTimes(1);
-
-            expect(comparePasswordsSpy).toHaveBeenCalledWith(userById.userOldPassword, userById.currentUserPasswordDecrypted);
-            expect(comparePasswordsSpy).toHaveBeenCalledTimes(1);
-
-            expect(selectUserGroupSpy).toHaveBeenCalledWith(userByName.userNewNameHashed, userById.userId);
-            expect(selectUserGroupSpy).toHaveBeenCalledTimes(1);
-
-            expect(updateUserSetStateSpy).toHaveBeenCalledWith(userById);
-            expect(updateUserSetStateSpy).toHaveBeenCalledTimes(1);
-
-            expect(res).toEqual(updatedUser);
-        });
-
-
-        it ('should throw an error with status 403 and message "Invalid old password!"', async () => {
-            const command = new UpdateUserCommand(1,createUserDataDto);
-
-            jest.spyOn(loadUserByIdPortMock, 'loadUserById').mockResolvedValue(userById);
-            jest.spyOn(loadUserByNamePort, 'loadUserByName').mockResolvedValue(userByName);
-            jest.spyOn(userById, 'comparePasswords').mockReturnValue(false);
-            jest.spyOn(userById, 'selectUserGroup').mockReturnValue(2);
-            jest.spyOn(updateUserStatePort, 'updateUserState').mockReturnValue(updatedUser);
-
-            try {
-                await updateUserServce.updateUser(command);
-            } catch(e) {
-                expect(e.message).toBe('Invalid old password!');
-                expect(e.status).toBe(403);
-            }
-        });
+      try {
+        await updateUserServce.updateUser(command);
+      } catch (e) {
+        expect(e.message).toBe('Invalid old password!');
+        expect(e.status).toBe(403);
+      }
     });
+  });
 });
-
-
-
-
-
-
-
-
 
 /*             const userDataDto = {
                 "userName":"gdfgjuuyg978989sdhdsfdasdasdasdsudf",
@@ -130,9 +144,7 @@ describe('UpdateUserService', () => {
                 "signature": "ac46abebcd7c8255f61f82afe7e57aec"
             } */
 
-            
-            
-            /* const userById = new UserEntity(
+/* const userById = new UserEntity(
                 'b8ea7132aeb096a3cdc8cd453075f8bd53ead6120baf545299e4949aeb9ff5ba',
                 'Z2ZpVzdtNVFsRmtSQ0FUYUtlcWZXZXh3a1VZcU9XL0ZEdDJRaU5XSHVVWT0tLWJxTHpUY3J0SXFNSXQ0ZkhPRm1zbHc9PQ==',
                 'veryStrongPassword',
@@ -142,14 +154,11 @@ describe('UpdateUserService', () => {
                 'aUhWM2dRMC9XY2E1R1ZianJ3WTBNZVpNaHNMWmM4L3RzTWdkYWw1NjBJVT0tLW5kb2hrbERTcHRQOUlnZWs1dVdRMWc9PQ==',
             ); */
 
-            
-   /*          const userOldPassword = 'veryStrongPassword';
+/*          const userOldPassword = 'veryStrongPassword';
             const currentUserPasswordDecrypted = 'veryStrongPassword';
             const userNewNameHashed = 'b8ea7132aeb096a3cdc8cd453075f8bd53ead6120baf545299e4949aeb9ff5ba'; */
 
-
-
- /*            const result = await updateUserService.updateUser(command);
+/*            const result = await updateUserService.updateUser(command);
                 console.log(result);
 
             const expectedResult = {
@@ -161,9 +170,7 @@ describe('UpdateUserService', () => {
 
             expect(result).toEqual(expectedResult); */
 
-
-
-       /*  const userData = {
+/*  const userData = {
             "currentUserNameHashed" : 'Slava',
             "currentUserPasswordEncrypted": 'sdasdasdasdasd',
             "currentUserPasswordDecrypted": 'asdasddaasdaw34',
@@ -173,7 +180,6 @@ describe('UpdateUserService', () => {
             "userNewPasswordEncrypted": 'sadasdqwe3e',
             "isSameNameUser": 'Slava'
         } */
-
 
 /* 
         const result = {

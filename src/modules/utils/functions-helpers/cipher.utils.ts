@@ -1,4 +1,4 @@
-const crypto = require('crypto');
+import * as crypto from 'crypto';
 
 export const encrypt = (password: string, ENC_KEY: string): string => {
   const IV = crypto.randomBytes(16);
@@ -18,9 +18,9 @@ export const decrypt = (encryptedPassword: string, ENC_KEY: string): string => {
   return decrypted + decipher.final('utf8');
 };
 
-export const hashToSha256 = (userName:string, HASH_SECRET: string):string => {
+export const hashToSha256 = (userName: string, HASH_SECRET: string): string => {
   return crypto
-  .createHmac('sha256', HASH_SECRET)
-  .update(userName)
-  .digest('hex');
+    .createHmac('sha256', HASH_SECRET)
+    .update(userName)
+    .digest('hex');
 };

@@ -1,35 +1,39 @@
 import {
   Controller,
   Body,
-  Get,
   Post,
   UseGuards,
   Put,
   Param,
   Inject,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CreateUserDataDto } from './dto/create-user-data.dto';
 import { SignatureGuard } from './guards/signature.guard';
-import { ValidationPipe } from './validation.pipe';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ErrorResponse403, ErrorResponse404, ErrorResponse400 } from './error.type';
+import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ErrorResponse403,
+  ErrorResponse404,
+  ErrorResponse400,
+} from './error.type';
 import { UserOrmEntity } from '../user-persistence/user.orm.entity';
-import { UpdateUserUseCase, UpdateUserUseCaseSymbol } from '../../domains/ports/in/update-user.use-case';
+import {
+  UpdateUserUseCase,
+  UpdateUserUseCaseSymbol,
+} from '../../domains/ports/in/update-user.use-case';
 import { UpdateUserCommand } from '../../domains/ports/in/update-user.command';
 import { UserPersistenceAdapterService } from '../user-persistence/user.persistance-adapter.service';
-
-
 
 @Controller('user')
 export class UsersController {
   constructor(
     private readonly userDataService: UserPersistenceAdapterService,
-    @Inject(UpdateUserUseCaseSymbol) private readonly _userUpdateService: UpdateUserUseCase,
+    @Inject(UpdateUserUseCaseSymbol)
+    private readonly _userUpdateService: UpdateUserUseCase,
   ) {}
 
-
   @Post()
-  @ApiOperation({summary:'create user'})
+  @ApiOperation({ summary: 'create user' })
   @ApiResponse({
     status: 200,
     description: 'User created',
@@ -53,13 +57,12 @@ export class UsersController {
     return this.userDataService.createUser(createProductDto);
   }
 
-
   @Put(':id')
-  @ApiOperation({summary:'update user'})
+  @ApiOperation({ summary: 'update user' })
   @ApiResponse({
     status: 200,
     description: 'User updated',
-    type: UserOrmEntity, 
+    type: UserOrmEntity,
   })
   @ApiResponse({
     status: 403,
@@ -82,39 +85,11 @@ export class UsersController {
     @Param('id') id: number,
     @Body(new ValidationPipe()) createUserDataDto: CreateUserDataDto,
   ): Promise<UserOrmEntity> {
-    const updateUserCommand = new UpdateUserCommand(
-      id,
-      createUserDataDto
-    )
+    const updateUserCommand = new UpdateUserCommand(id, createUserDataDto);
 
     return await this._userUpdateService.updateUser(updateUserCommand);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* @ApiTags('user')
 @Controller('user')

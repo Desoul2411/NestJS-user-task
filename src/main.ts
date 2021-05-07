@@ -8,7 +8,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Add user doc')
-    .setDescription('User add functionality description')
+    .setDescription('User adding functionality description')
     .setVersion('1.0')
     .addTag('users')
     .build();

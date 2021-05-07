@@ -26,6 +26,7 @@
     "@nestjs/platform-express": "^7.6.13",
     "@nestjs/swagger": "^4.7.16",
     "@nestjs/typeorm": "^7.1.5",
+    "blueimp-md5-es6": "^2.7.4",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "dotenv": "^8.2.0",

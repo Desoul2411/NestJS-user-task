@@ -4,14 +4,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { UserOrmEntity } from './modules/user-persistence/user.orm.entity';
 import { UserPersistenceModule } from './modules/user-persistence/user-persistance.module';
-require('dotenv').config();
-
+//require('dotenv').config();
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-     // host: 'localhost',
+      // host: 'localhost',
       host: process.env.MYSQL_HOST,
       port: +process.env.HTTP_PORT,
       username: process.env.MYSQL_USER,
@@ -20,10 +21,10 @@ require('dotenv').config();
       entities: [UserOrmEntity],
       synchronize: true,
       //keepConnectionAlive: true,
-      dropSchema: true
+      dropSchema: true,
     }),
     UsersModule,
-    UserPersistenceModule
+    UserPersistenceModule,
   ],
 })
 export class AppModule {

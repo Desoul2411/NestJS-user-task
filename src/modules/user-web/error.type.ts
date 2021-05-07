@@ -2,37 +2,33 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ErrorResponse403 {
   @ApiProperty({
-    default: 403
+    default: 403,
   })
   statusCode: number;
   @ApiProperty({
-    default:"Access forbidden"
+    default: 'Access forbidden',
   })
   message: string;
 }
 
 export class ErrorResponse404 {
   @ApiProperty({
-    default: 404
+    default: 404,
   })
   statusCode: number;
   @ApiProperty({
-    default:"No such user"
+    default: 'No such user',
   })
   message: string;
 }
 
 export class ErrorResponse400 {
   @ApiProperty({
-    default: 404
+    default: 404,
   })
   statusCode: number;
   @ApiProperty({
-    default:"Validation failed"
+    default: 'Validation failed',
   })
   message: string;
 }
-
-
-
-
