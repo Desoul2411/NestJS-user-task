@@ -1,4 +1,4 @@
-version: '3.0'
+version: "3.0"
 
 services:
   main:
@@ -10,8 +10,8 @@ services:
     volumes:
       - .:/app
       - /app/modules/node_modules
-    ports: 
-    - "5000:5000"
+    ports:
+      - "5000:5000"
     command: npm run start:dev
     depends_on:
       - mysql
@@ -22,14 +22,12 @@ services:
     env_file:
       - .env
     environment:
-      MYSQL_DATABASE: user_schema
-      MYSQL_USER: root
-      MYSQL_PASSWORD: p1
+      MYSQL_DATABASE: mysql
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
     ports:
-    - "6033:3306"
+      - "6033:3306"
     volumes:
       - dbdata:/var/lib/mysql
     restart: always
 volumes:
   dbdata:
-
