@@ -196,7 +196,9 @@ select * from team;
 
 *****************DOCKER COMMANDS*****************************
 
--sudo !!   - run previous command with sudo
+- sudo !!   - run previous command with sudo
+
+- sudo su - admin mode
 
 -it is used to list all the running containers.
 docker container ls -a
@@ -213,8 +215,18 @@ docker rm -f $(docker ps -a -q)
 
 
 
-- docker volume rm -f dbdata   - delete 'dbdata' volume
+- docker volume rm -f dbdata   -  delete 'dbdata' volume
 
+- docker-compose up mysql  - run mysql ONLY container
+
+- docker inspect e82956c39243 | grep Image  - inspect image
+
+- docker-compose up - run containers defined in docker-compose
+- docker-compose down - Stops containers and removes containers, networks, volumes, and images created by up.
+
+docker rm -f $(docker ps -a -q) - delete containers
+
+docker volume rm $(docker volume ls -q) - delete volumes
 
 
 
