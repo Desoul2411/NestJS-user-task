@@ -16,7 +16,7 @@ dotenv.config();
       port: +process.env.HTTP_PORT,
       username: process.env.MYSQL_USER,
       password: process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DB,
+      database: process.env.MYSQL_DATABASE,
       entities: [UserOrmEntity],
       synchronize: true,
       //keepConnectionAlive: true,

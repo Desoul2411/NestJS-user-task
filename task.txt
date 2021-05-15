@@ -192,7 +192,12 @@ select * from team;
 
 
 
-DOCKER COMMANDS
+
+
+*****************DOCKER COMMANDS*****************************
+
+-sudo !!   - run previous command with sudo
+
 -it is used to list all the running containers.
 docker container ls -a
 
@@ -205,6 +210,12 @@ docker ps -a
 
 -to stop all the Docker containers (force)
 docker rm -f $(docker ps -a -q)  
+
+
+
+- docker volume rm -f dbdata   - delete 'dbdata' volume
+
+
 
 
 
